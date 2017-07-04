@@ -1,6 +1,6 @@
 var debug = require('debug')('sync');
 var app = require('./app');
-// var db = require('./db');
+var db = require('./db');
 
 var App = function() {
 
@@ -14,8 +14,9 @@ var App = function() {
 
     self.setupVariables = function() {
         //  Set the environment variables we need.
+        console.log('process.env '+JSON.stringify(process.env));
         self.port = process.env.PORT || 5000;
-        // self.dbConnectionURL = process.env.MONGODB_URI; // != null ? process.env.MONGODB_URI + 'learning' : 'mongodb://localhost:27017/users';
+        self.dbConnectionURL = process.env.DATABASE_URL; // != null ? process.env.MONGODB_URI + 'learning' : 'mongodb://localhost:27017/users';
     };
 
 
@@ -67,18 +68,18 @@ var App = function() {
      *  Start the server (starts up the sample application).
      */
     self.start = function() {
-        // db.connect(self.dbConnectionURL, function(err) {
-        //     if (err) {
-        //         console.log('Unable to connect to Mongo.');
-        //         process.exit(1);
-        //     } else {
-        //         //  Start the app on the specific interface (and port).
+        db.connect(self.dbConnectionURL, function(err) {
+            if (err) {
+                console.log('Unable to connect to Postgres. '+err);
+                process.exit(1);
+            } else {
+                //  Start the app on the specific interface (and port).
                 app.listen(self.port, self.ipaddress, function() {
                     debug('%s: Node server started on %s:%d ...',
                         Date(Date.now() ), self.ipaddress, self.port);
                 });
-        //     }
-        // });
+            }
+        });
     };
 
 };

@@ -1,14 +1,19 @@
-var MongoClient = require('mongodb').MongoClient;
+var pg = require('pg');
+
 var state = {
   db: null
 };
 
 exports.connect = function(url, done) {
   if (state.db) return done();
+  console.log('connect to url '+url);
 
-  MongoClient.connect(url, function(err, db) {
+  var pool = new pg.Pool({
+    connectionString: url
+  });
+  pool.connect(function(err, db) {
     if (err) return done(err);
-	//console.log("Connected to "+url+" database");
+	  console.log("Connected to "+url+" database");
     state.db = db;
     done();
   });
@@ -20,10 +25,9 @@ exports.getDB = function() {
 
 exports.close = function(done) {
   if (state.db) {
-    state.db.close(function(err, result) {
-      state.db = null;
-      state.mode = null;
-      done(err);
-    });
+    state.db.end();
+    state.db = null;
+    state.mode = null;
+    done(err);
   }
 };

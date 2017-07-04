@@ -20,15 +20,9 @@ git pull origin master // get changes from master or other branch name
 heroku create multiplication-table-server
 git push heroku master    // deploy to heroku
 ##################################################
+app url - https://multiplication-table-server.herokuapp.com/multiplication-table/api/achievements
 
-########## mLab MongoDB (https://devcenter.heroku.com/articles/mongolab)
-heroku addons:create mongolab
-heroku config:get MONGODB_URI -s >> .env
-npm install mongodb --save
-#create training-exchange collection (mLab Admin dashboard https://www.mlab.com/databases/heroku_kcbl2mw5)
-##################################################
-
-########## Temporize Scheduler (https://devcenter.heroku.com/articles/temporize)
-heroku addons:create temporize
-heroku config:get TEMPORIZE_URL -s >> .env
+########## Postgres
+heroku addons:create heroku-postgresql:hobby-dev
+npm install pg --save
 ##################################################
