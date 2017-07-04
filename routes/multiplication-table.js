@@ -18,7 +18,7 @@ router.get('/api/achievements', function(req, res) {
 //     }
 //   });
 
-    res.send({a:1, b:'a'});
+    res.json({a:1, b:'a'});
 });
 
 // router.get('/api/sync/:id', function(req, res) {

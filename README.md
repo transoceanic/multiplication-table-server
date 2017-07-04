@@ -25,4 +25,7 @@ app url - https://multiplication-table-server.herokuapp.com/multiplication-table
 ########## Postgres
 heroku addons:create heroku-postgresql:hobby-dev
 npm install pg --save
+# instal postgres localy
+# run postgres cli (command from postgres addons -> View credentials) https://data.heroku.com/datastores/87af4658-7d1f-4f7b-9560-5e470699a180
+heroku pg:psql postgresql-round-61891 --app multiplication-table-server
 ##################################################
