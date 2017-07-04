@@ -12,8 +12,9 @@ exports.connect = function(url, done) {
     connectionString: url
   });
   pool.connect(function(err, db) {
+	  console.log("----------------pool.connect");
     if (err) return done(err);
-	  console.log("Connected to "+url+" database");
+	  console.log("----------------pool.connect success");
     state.db = db;
     done();
   });

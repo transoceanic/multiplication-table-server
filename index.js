@@ -14,7 +14,6 @@ var App = function() {
 
     self.setupVariables = function() {
         //  Set the environment variables we need.
-        console.log('process.env '+JSON.stringify(process.env));
         self.port = process.env.PORT || 5000;
         self.dbConnectionURL = process.env.DATABASE_URL; // != null ? process.env.MONGODB_URI + 'learning' : 'mongodb://localhost:27017/users';
     };
