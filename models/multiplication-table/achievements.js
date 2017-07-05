@@ -26,10 +26,10 @@ exports.getAll = function(callback) {
             UNION
         SELECT MAX(score), MIN(score), 'month' period FROM last_month
             UNION
-        SELECT MAX(score), MIN(score), 'year' period FROM last_year1;
+        SELECT MAX(score), MIN(score), 'year' period FROM last_year;
     `);
     query.on('row', function(row) {
-        console.log('----------row fetched '+JSON.stringify(row));
+        // console.log('----------row fetched '+JSON.stringify(row));
         result.push(row);
     });
     query.on('error', function(err) {
@@ -41,40 +41,43 @@ exports.getAll = function(callback) {
 };
 
 // Create new user and return its id
-exports.create = function(training, callback) {
+exports.create = function(score, callback) {
     var db = DB.getDB();
     var now = new Date().getTime();
-    training.createDate = now;
-    db.collection(COLLECTION).insertOne(training, function(err, result) {
-        if (err)
-            return callback(err);
+    score.createDate = now;
 
-        callback(null, {
-	        _id: result.insertedId.toHexString(),
-            createDate: now
-        });
+    const query = db.query(`INSERT INTO last_week(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP);`, [score.name, score.score]);
+    query.on('row', function(row) {
+        console.log('----------row inserted '+JSON.stringify(row));
+        result.push(row);
     });
-};
-
-exports.update = function(id, training, callback) {
-    var db = DB.getDB();
-    training._id = Utils.ObjectID(id);
-    db.collection(COLLECTION).updateOne({'_id': Utils.ObjectID(id)}, training, function(err, result) {
-        if (err)
-            return callback(err);
-
-        var retObj = {_id: null};
-        if(result.modifiedCount > 0)
-            retObj._id = id;
-
-        // callback(null, training);
-        callback(null, retObj);
-    });
-};
-
-exports.remove = function(id, callback) {
-    db = DB.getDB();
-    db.collection(COLLECTION).deleteOne({_id: Utils.ObjectID(id)}, function(err, result) {
+    query.on('error', function(err) {
         callback(err);
     });
+    query.on('end', function() {
+        callback(null, result);
+    });
 };
+
+// exports.update = function(id, training, callback) {
+//     var db = DB.getDB();
+//     training._id = Utils.ObjectID(id);
+//     db.collection(COLLECTION).updateOne({'_id': Utils.ObjectID(id)}, training, function(err, result) {
+//         if (err)
+//             return callback(err);
+
+//         var retObj = {_id: null};
+//         if(result.modifiedCount > 0)
+//             retObj._id = id;
+
+//         // callback(null, training);
+//         callback(null, retObj);
+//     });
+// };
+
+// exports.remove = function(id, callback) {
+//     db = DB.getDB();
+//     db.collection(COLLECTION).deleteOne({_id: Utils.ObjectID(id)}, function(err, result) {
+//         callback(err);
+//     });
+// };

@@ -1,6 +1,7 @@
 var express = require('express');
 var router  = express.Router();
 var Achievements = require('../models/multiplication-table/achievements');
+var LEGAL_INTERVAL = 10*60*1000; // 10 minutes
 
 function decrypt(text){
   var temp = parseInt(text, 16);
@@ -11,7 +12,8 @@ function decrypt(text){
 router.get('/api/achievements', function(req, res) {
   Achievements.getAll(function(err, result) {
     if (err) {
-        res.status(500).send(err);
+        // res.status(500).send(err);
+        res.status(500).send({success: false});
     } else {
         res.send(result);
     }
@@ -29,31 +31,32 @@ router.get('/api/achievements', function(req, res) {
 //     });
 // });
 
-// // create
-// router.post('/api/sync', function (req, res) {
-//     var training = req.body;
-//     if (training.token) {
-//         // console.log('token '+training.token);
-//         var sentDate = new Date(parseInt(decrypt(training.token))).getTime();
-//         if (!isNaN(sentDate)) {
-//             // console.log('decrypted '+sentDate);
-//             var now = new Date().getTime();
-//             if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
-//                 // console.log('success'+Math.abs(now - sentDate));
-//                 Training.create(training, function(err, retObj) {
-//                     if (err) {
-//                         res.status(500).send(err);
-//                     } else {
-//                         res.send(retObj);
-//                     }
-//                 });
-//                 return;
-//             }
-//         }
-//     }
+// save
+router.post('/api/save', function (req, res) {
+    var score = req.body;
+    if (score.token) {
+        console.log('token '+score.token);
+        var sentDate = new Date(parseInt(decrypt(score.token))).getTime();
+        if (!isNaN(sentDate)) {
+            console.log('decrypted '+sentDate);
+            var now = new Date().getTime();
+            if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
+                console.log('success '+Math.abs(now - sentDate));
+                Achievements.create(score, function(err, result) {
+                    if (err) {
+                        // res.status(500).send(err);
+                        res.status(500).send({success: false});
+                    } else {
+                        res.send(result);
+                    }
+                });
+                return;
+            }
+        }
+    }
 
-//     res.sendStatus(500);
-// });
+    res.sendStatus(500);
+});
 
 // // update
 // router.put('/api/sync/:id', function (req, res) {

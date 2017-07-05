@@ -6,15 +6,15 @@ var state = {
 
 exports.connect = function(url, done) {
   if (state.db) return done();
-  console.log('connect to url '+url);
+  // console.log('connect to url '+url);
 
   var pool = new pg.Pool({
     connectionString: url
   });
   pool.connect(function(err, db) {
-	  console.log("----------------pool.connect");
-    if (err) return done(err);
-	  console.log("----------------pool.connect success");
+    // if (err) return done(err);
+    if (err) return done({success: false});
+    
     state.db = db;
     done();
   });
