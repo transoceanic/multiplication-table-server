@@ -40,7 +40,7 @@ exports.create = function(score, callback) {
     var db = DB.getDB();
     const result = [];
 
-    db.query(`INSERT INTO last_week(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP);`,
+    db.query(`INSERT INTO last_week(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id INTO lastId;`,
     [score.name, score.score],
     (err, res) => {
         if (err) 
