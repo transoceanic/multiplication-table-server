@@ -34,14 +34,15 @@ router.get('/api/achievements', function(req, res) {
 // save
 router.post('/api/save', function (req, res) {
     var score = req.body;
-    if (score.token) {
-        console.log('token '+score.token);
-        var sentDate = new Date(parseInt(decrypt(score.token))).getTime();
-        if (!isNaN(sentDate)) {
-            console.log('decrypted '+sentDate);
-            var now = new Date().getTime();
-            if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
-                console.log('success '+Math.abs(now - sentDate));
+    console.log('save------ '+JSON.stringify(score));
+    // if (score.token) {
+    //     console.log('token '+score.token);
+    //     var sentDate = new Date(parseInt(decrypt(score.token))).getTime();
+    //     if (!isNaN(sentDate)) {
+    //         console.log('decrypted '+sentDate);
+    //         var now = new Date().getTime();
+    //         if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
+    //             console.log('success '+Math.abs(now - sentDate));
                 Achievements.create(score, function(err, result) {
                     if (err) {
                         // res.status(500).send(err);
@@ -51,11 +52,11 @@ router.post('/api/save', function (req, res) {
                     }
                 });
                 return;
-            }
-        }
-    }
+    //         }
+    //     }
+    // }
 
-    res.sendStatus(500);
+    // res.sendStatus(500);
 });
 
 // // update
