@@ -3,6 +3,8 @@ var router  = express.Router();
 // var Training = require('../models/driving-test/training');
 // var LEGAL_INTERVAL = 10*60*1000; // 10 minutes
 
+var DB = require('../db');
+
 function decrypt(text){
   var temp = parseInt(text, 16);
   return isNaN(temp) ? -1 : temp/3;
@@ -17,6 +19,11 @@ router.get('/api/achievements', function(req, res) {
 //         res.send(result);
 //     }
 //   });
+    var db = DB.getDB();
+    db.query('SELECT id, name, score FROM LAST_DAY;')
+    .on('row', function(row) {
+      console.log('----------row fetched');
+    });
 
     res.json({a:1, b:'a'});
 });
