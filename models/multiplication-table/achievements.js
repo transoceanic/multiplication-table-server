@@ -27,17 +27,21 @@ exports.getAll = function(callback) {
         SELECT MAX(score), MIN(score), 'month' period FROM last_month
             UNION
         SELECT MAX(score), MIN(score), 'year' period FROM last_year;
-    `);
-    query.on('row', function(row) {
-        // console.log('----------row fetched '+JSON.stringify(row));
-        result.push(row);
+    `, (err, res) => {
+        if (err) 
+            return callback(err);
+        console.log('----------res-'+JSON.stringify(res));
     });
-    query.on('error', function(err) {
-        callback(err);
-    });
-    query.on('end', function() {
-        callback(null, result);
-    });
+    // query.on('row', function(row) {
+    //     // console.log('----------row fetched '+JSON.stringify(row));
+    //     result.push(row);
+    // });
+    // query.on('error', function(err) {
+    //     callback(err);
+    // });
+    // query.on('end', function() {
+    //     callback(null, result);
+    // });
 };
 
 // Create new user and return its id
