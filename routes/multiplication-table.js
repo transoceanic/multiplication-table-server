@@ -1,9 +1,6 @@
 var express = require('express');
 var router  = express.Router();
-// var Training = require('../models/driving-test/training');
-// var LEGAL_INTERVAL = 10*60*1000; // 10 minutes
-
-var DB = require('../db');
+var Achievements = require('../models/multiplication-table/achievements');
 
 function decrypt(text){
   var temp = parseInt(text, 16);
@@ -12,20 +9,20 @@ function decrypt(text){
 
 
 router.get('/api/achievements', function(req, res) {
-//   Training.clear(function(err, result) {
-//     if (err) {
-//         res.status(500).send(err);
-//     } else {
-//         res.send(result);
-//     }
-//   });
-    var db = DB.getDB();
-    db.query('SELECT id, name, score FROM LAST_DAY;')
-    .on('row', function(row) {
-      console.log('----------row fetched '+JSON.stringify(row));
-    });
+  Achievements.getAll(function(err, result) {
+    if (err) {
+        res.status(500).send(err);
+    } else {
+        res.send(result);
+    }
+  });
+    // var db = DB.getDB();
+    // db.query('SELECT id, name, score FROM LAST_DAY;')
+    // .on('row', function(row) {
+    //   console.log('----------row fetched '+JSON.stringify(row));
+    // });
 
-    res.json({a:1, b:'a'});
+    // res.json({a:1, b:'a'});
 });
 
 // router.get('/api/sync/:id', function(req, res) {

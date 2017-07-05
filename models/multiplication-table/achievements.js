@@ -1,24 +1,43 @@
 var DB = require('../../db');
-var Utils = require('../../utils');
-var COLLECTION = 'training-exchange';
+// var Utils = require('../../utils');
+// var COLLECTION = 'training-exchange';
 
 // Clear after week
-exports.clear = function(callback) {
-    var db = DB.getDB();
-    var afterWeek = new Date().getTime() - 7*24*60*60*1000;
-	db.collection(COLLECTION)
-        .deleteMany({'createDate':{$lt:afterWeek}}, function(err, result) {
-            if (err)
-                return callback(err);
+// exports.clear = function(callback) {
+//     var db = DB.getDB();
+//     var afterWeek = new Date().getTime() - 7*24*60*60*1000;
+// 	db.collection(COLLECTION)
+//         .deleteMany({'createDate':{$lt:afterWeek}}, function(err, result) {
+//             if (err)
+//                 return callback(err);
 
-            callback(null, {deletedCount: result.deletedCount});
-        });
-};
+//             callback(null, {deletedCount: result.deletedCount});
+//         });
+// };
 
-exports.getById = function(id, callback) {
+exports.getAll = function(callback) {
     var db = DB.getDB();
-    db.collection(COLLECTION)
-        .findOne({'_id': Utils.ObjectID(id)}, callback);
+    const result = [];
+
+    const query = db.query(`
+        SELECT MAX(score), MIN(score), 'day' period FROM last_day
+            UNION
+        SELECT MAX(score), MIN(score), 'week' period FROM last_week
+            UNION
+        SELECT MAX(score), MIN(score), 'month' period FROM last_month
+            UNION
+        SELECT MAX(score), MIN(score), 'year' period FROM last_year;
+    `);
+    query.on('row', function(row) {
+        console.log('----------row fetched '+JSON.stringify(row));
+        result.push(row);
+    });
+    query.on('error', function(err) {
+        callback(err);
+    });
+    query.on('end', function() {
+        callback(null, result);
+    });
 };
 
 // Create new user and return its id
