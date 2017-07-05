@@ -45,8 +45,8 @@ exports.create = function(score, callback) {
     (err, res) => {
         if (err) 
             return callback(err);
-        console.log('------------'+JSON.stringify(res));
-        callback(null, res);
+
+        callback(null, res.rows[0]);
     });
 };
 
