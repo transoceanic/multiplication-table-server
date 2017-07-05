@@ -19,7 +19,7 @@ exports.getAll = function(callback) {
     var db = DB.getDB();
     const result = [];
 
-    const query = db.query(`
+    db.query(`
         SELECT MAX(score), MIN(score), 'day' period FROM last_day
             UNION
         SELECT MAX(score), MIN(score), 'week' period FROM last_week
@@ -33,16 +33,6 @@ exports.getAll = function(callback) {
 
         callback(null, res.rows);
     });
-    // query.on('row', function(row) {
-    //     // console.log('----------row fetched '+JSON.stringify(row));
-    //     result.push(row);
-    // });
-    // query.on('error', function(err) {
-    //     callback(err);
-    // });
-    // query.on('end', function() {
-    //     callback(null, result);
-    // });
 };
 
 // Create new user and return its id
@@ -50,16 +40,13 @@ exports.create = function(score, callback) {
     var db = DB.getDB();
     const result = [];
 
-    const query = db.query(`INSERT INTO last_week(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP);`, [score.name, score.score]);
-    query.on('row', function(row) {
-        console.log('----------row inserted '+JSON.stringify(row));
-        result.push(row);
-    });
-    query.on('error', function(err) {
-        callback(err);
-    });
-    query.on('end', function() {
-        callback(null, result);
+    db.query(`INSERT INTO last_week(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP);`,
+    [score.name, score.score],
+    (err, res) => {
+        if (err) 
+            return callback(err);
+        console.log('------------'+JSON.stringify(res));
+        callback(null, res);
     });
 };
 
