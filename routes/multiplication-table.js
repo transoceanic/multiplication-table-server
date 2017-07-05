@@ -16,13 +16,6 @@ router.get('/api/achievements', function(req, res) {
         res.send(result);
     }
   });
-    // var db = DB.getDB();
-    // db.query('SELECT id, name, score FROM LAST_DAY;')
-    // .on('row', function(row) {
-    //   console.log('----------row fetched '+JSON.stringify(row));
-    // });
-
-    // res.json({a:1, b:'a'});
 });
 
 // router.get('/api/sync/:id', function(req, res) {

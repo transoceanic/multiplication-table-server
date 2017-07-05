@@ -26,7 +26,7 @@ exports.getAll = function(callback) {
             UNION
         SELECT MAX(score), MIN(score), 'month' period FROM last_month
             UNION
-        SELECT MAX(score), MIN(score), 'year' period FROM last_year;
+        SELECT MAX(score), MIN(score), 'year' period FROM last_year1;
     `);
     query.on('row', function(row) {
         console.log('----------row fetched '+JSON.stringify(row));
