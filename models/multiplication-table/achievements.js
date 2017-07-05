@@ -30,7 +30,8 @@ exports.getAll = function(callback) {
     `, (err, res) => {
         if (err) 
             return callback(err);
-        console.log('----------res-'+JSON.stringify(res));
+
+        callback(null, res.rows);
     });
     // query.on('row', function(row) {
     //     // console.log('----------row fetched '+JSON.stringify(row));
