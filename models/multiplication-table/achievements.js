@@ -43,8 +43,7 @@ exports.getAll = function(callback) {
 // Create new user and return its id
 exports.create = function(score, callback) {
     var db = DB.getDB();
-    var now = new Date().getTime();
-    score.createDate = now;
+    const result = [];
 
     const query = db.query(`INSERT INTO last_week(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP);`, [score.name, score.score]);
     query.on('row', function(row) {
