@@ -86,7 +86,7 @@ exports.check = function(data, callback) {
                 }
                 return;
             }
-            console.log('check----------'+JSON.stringify(res));
+            // console.log('check----------'+JSON.stringify(res));
 
             if (res.rows.length > 0 && (res.rows[0].count < LIMIT || res.rows[0].min < data.score)) {
 // MERGE INTO last_year AS last USING (VALUES(4,'andrey3',400)) temp ON last.id = temp.column1 WHEN NOT MATCHED INSERT VALUES(temp.column2, temp.column3, CURRENT_TIMESTAMP) WHEN MATCHED UPDATE SET score = temp.column3, date = CURRENT_TIMESTAMP;
@@ -97,10 +97,10 @@ exports.check = function(data, callback) {
                     //     WHERE NOT EXISTS (SELECT 1 FROM last_year WHERE id = 4)) RETURNING id;
 
                 let query;
-                if (res.rows[0].exists == 'f') {
-                    query = `INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
-                } else {
+                if (res.rows[0].exists) {
                     query = `UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
+                } else {
+                    query = `INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
                 }
 
                 db.query(query, [data.name, data.score, data.id || null],
