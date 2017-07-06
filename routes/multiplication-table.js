@@ -62,11 +62,23 @@ router.post('/score/check', function (req, res) {
                                                 // res.status(500).send(err);
                                                 res.status(500).send({success: false});
                                             } else {
-                                                res.send(result && result.length > 0 ? result : null);
+                                                if (result && result.length > 0) {
+                                                    // res.send(result && result.length > 0 ? result : null);
+                                                    let output = {};
+                                                    for (const table of result) {
+                                                        output[table.period] = {
+                                                            id: table.id,
+                                                            order: table.order
+                                                        };
+                                                    }
+                                                    res.send(output);
+                                                } else {
+                                                    res.send();
+                                                }
                                             }
                                         });
                                     } else {
-                                        res.send(null);
+                                        res.send();
                                     }
                                }
                             });
