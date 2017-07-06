@@ -34,7 +34,7 @@ router.get('/score/best', function(req, res) {
 // save achievements
 router.post('/score/check', function (req, res) {
     var data = req.body;
-    console.log('save------ '+JSON.stringify(score));
+    console.log('save------ '+JSON.stringify(data));
     // if (data.token) {
     //     console.log('token '+data.token);
     //     var sentDate = new Date(parseInt(decrypt(data.token))).getTime();
