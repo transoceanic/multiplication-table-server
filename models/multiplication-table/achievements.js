@@ -119,9 +119,20 @@ exports.check = function(data, callback) {
 
                     console.log('success----------'+JSON.stringify(res));
 
-                    // let last = res.rows[0];
-                    // last.period = table;
-                    // result.push(last);
+                    if (res.command === 'UPDATE') {
+                        if (res.rowCount > 0) {
+                            result.push({
+                                id: data.stat[table],
+                                period: table
+                            });
+                        }
+                    } else {
+                        if (res.rows && res.rows.length > 0) {
+                            let last = res.rows[0];
+                            last.period = table;
+                            result.push(last);
+                        }
+                    }
 
                     counter--;
                     if (counter === 0) {
