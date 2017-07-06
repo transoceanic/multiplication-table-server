@@ -100,7 +100,7 @@ exports.check = function(data, callback) {
                 let query, params;
                 if (res.rows[0].exists) {
                     query = `UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
-                    params = [data.name, data.score, data.id || null];
+                    params = [data.name, data.score, data.stat[table] || null];
                 } else {
                     query = `INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
                     params = [data.name, data.score];
