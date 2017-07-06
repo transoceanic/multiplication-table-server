@@ -143,5 +143,32 @@ exports.check = function(data, callback) {
             }
         });
     }
+};
 
+
+// get order
+exports.getOrders = function(data, callback) {
+    var db = DB.getDB();
+    var newData = [];
+    var counter = 0;
+
+    for (const table of data) {
+        counter++;
+
+        db.query(`SELECT rn FROM 
+                        (SELECT id, row_number() over(order by score desc) AS rn FROM last_${table.period}) AS last 
+                    WHERE id = $1;`, 
+        [table.id],
+        (err, res) => {
+            if (!err) {
+                var t = table;
+                t.order = res.rows[0].rn;
+                newData.push(t);
+            }
+            counter--;
+            if (counter === 0) {
+                callback(null, newData);
+            }
+        });
+    }
 };
