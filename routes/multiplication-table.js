@@ -55,6 +55,9 @@ router.post('/score/check', function (req, res) {
                                     // res.status(500).send(err);
                                     res.status(500).send({success: false});
                                 } else {
+                                    if (result.length > 0) {
+                                        Achievements.limitBounds(function() {});
+                                    }
                                     res.send(result);
                                 }
                             });

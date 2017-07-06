@@ -117,7 +117,7 @@ exports.check = function(data, callback) {
                         return;
                     }
 
-                    console.log('success----------'+JSON.stringify(res));
+                    // console.log('success----------'+JSON.stringify(res));
 
                     if (res.command === 'UPDATE') {
                         if (res.rowCount > 0) {
