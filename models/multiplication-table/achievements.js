@@ -74,10 +74,16 @@ exports.check = function(data, callback) {
     for (const table of TABLES) {
         counter++;
 
-        db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count FROM last_${table}`, 
+        db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count,
+                    exists(SELECT 1 FROM last_year WHERE id = $1)
+                FROM last_${table}`, 
+        [data.id || null],
         (err, res) => {
             if (err) {
                 counter--;
+                if (counter === 0) {
+                    callback(null, result);
+                }
                 return;
             }
 
@@ -89,27 +95,29 @@ exports.check = function(data, callback) {
                     // INSERT INTO last_year(name, score, date) (SELECT 'andrey3', 400, CURRENT_TIMESTAMP
                     //     WHERE NOT EXISTS (SELECT 1 FROM last_year WHERE id = 4)) RETURNING id;
 
-                db.query(`
-                    MERGE INTO last_${table} AS last 
-                        USING (VALUES(4,'andrey3',400)) temp 
-                        ON last.id = temp.column1 
-                        WHEN NOT MATCHED 
-                            INSERT VALUES(temp.column2, temp.column3, CURRENT_TIMESTAMP) 
-                        WHEN MATCHED 
-                            UPDATE SET score = temp.column3, date = CURRENT_TIMESTAMP;
-                `,
-                [data.name, data.score, data.id || null],
+                let query;
+                if (res.rows[0].exists == 'f') {
+                    query = `INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
+                } else {
+                    query = `UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
+                }
+
+                db.query(query, [data.name, data.score, data.id || null],
                 (err, res) => {
                     if (err) {
                         console.log('error----------'+err);
                         counter--;
+                        if (counter === 0) {
+                            callback(null, result);
+                        }
                         return;
                     }
-                        console.log('success----------'+JSON.stringify(res));
+                    
+                    console.log('success----------'+JSON.stringify(res));
 
-                    let last = res.rows[0];
-                    last.period = table;
-                    result.push(last);
+                    // let last = res.rows[0];
+                    // last.period = table;
+                    // result.push(last);
 
                     counter--;
                     if (counter === 0) {
