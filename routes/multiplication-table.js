@@ -34,15 +34,14 @@ router.get('/score/best', function(req, res) {
 // save achievements
 router.post('/score/check', function (req, res) {
     var data = req.body;
-    console.log('save------ '+JSON.stringify(data));
-    // if (data.token) {
-    //     console.log('token '+data.token);
-    //     var sentDate = new Date(parseInt(decrypt(data.token))).getTime();
-    //     if (!isNaN(sentDate)) {
-    //         console.log('decrypted '+sentDate);
-    //         var now = new Date().getTime();
-    //         if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
-    //             console.log('success '+Math.abs(now - sentDate));
+    console.log('check------ '+JSON.stringify(data));
+    if (data.token) {
+        var sentDate = new Date(parseInt(decrypt(data.token))).getTime();
+        if (!isNaN(sentDate)) {
+            console.log('decrypted '+sentDate);
+            var now = new Date().getTime();
+            if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
+                console.log('success '+Math.abs(now - sentDate));
                 if (data.score > 0) {
                     Achievements.limitBounds(function(err, result) {
                         if (err) {
@@ -65,9 +64,9 @@ router.post('/score/check', function (req, res) {
                     });
                     return;
                 }
-    //         }
-    //     }
-    // }
+            }
+        }
+    }
 
     res.sendStatus(500);
 });
