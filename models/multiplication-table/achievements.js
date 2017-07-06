@@ -66,6 +66,7 @@ exports.limitBounds = function(callback) {
 
 // Check if score within 100 best scores
 exports.check = function(data, callback) {
+            console.log('check----------start');
     var db = DB.getDB();
     var counter = 0;
     var result = [];
