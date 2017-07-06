@@ -52,4 +52,10 @@ heroku pg:psql postgresql-round-61891 --app multiplication-table-server // to op
         SCORE   INTEGER     NOT NULL,
         DATE    TIMESTAMP   NOT NULL
     );
+    CREATE TABLE LAST_LIFE(
+        ID      BIGSERIAL   PRIMARY KEY,
+        NAME    TEXT        NOT NULL,
+        SCORE   INTEGER     NOT NULL,
+        DATE    TIMESTAMP   NOT NULL
+    );
 ##################################################

@@ -20,18 +20,24 @@ exports.getAll = function(callback) {
     const result = [];
 
     db.query(`
-        SELECT MAX(score), MIN(score), 'day' period FROM last_day
+        SELECT coalesce(MIN(score), 0) as min, 'day' period FROM last_day
             UNION
-        SELECT MAX(score), MIN(score), 'week' period FROM last_week
+        SELECT coalesce(MIN(score), 0) as min, 'week' period FROM last_week
             UNION
-        SELECT MAX(score), MIN(score), 'month' period FROM last_month
+        SELECT coalesce(MIN(score), 0) as min, 'month' period FROM last_month
             UNION
-        SELECT MAX(score), MIN(score), 'year' period FROM last_year;
+        SELECT coalesce(MIN(score), 0) as min, 'year' period FROM last_year
+            UNION
+        SELECT coalesce(MIN(score), 0) as min, 'life' period FROM last_life;
     `, (err, res) => {
         if (err) 
             return callback(err);
 
-        callback(null, res.rows);
+        var map = {};
+        for (const row of res.rows) {
+            map[ row.period ] = row.min;
+        }
+        callback(null, map);
     });
 };
 
@@ -39,6 +45,7 @@ exports.getAll = function(callback) {
 exports.create = function(score, callback) {
     var db = DB.getDB();
     const result = [];
+// select id, name, score, row_number() over(order by score desc) from last_week;
 
     db.query(`INSERT INTO last_week(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`,
     [score.name, score.score],

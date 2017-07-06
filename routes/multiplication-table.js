@@ -9,7 +9,7 @@ function decrypt(text){
 }
 
 
-router.get('/api/achievements', function(req, res) {
+router.get('/score/min', function(req, res) {
   Achievements.getAll(function(err, result) {
     if (err) {
         // res.status(500).send(err);
@@ -31,7 +31,7 @@ router.get('/api/achievements', function(req, res) {
 //     });
 // });
 
-// save
+// save achievements
 router.post('/api/save', function (req, res) {
     var score = req.body;
     console.log('save------ '+JSON.stringify(score));
