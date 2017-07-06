@@ -20,22 +20,22 @@ exports.getAll = function(callback) {
     const result = [];
 
     db.query(`
-        SELECT coalesce(MIN(score), 0) as min, 'day' period FROM last_day
+        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'day' period FROM last_day
             UNION
-        SELECT coalesce(MIN(score), 0) as min, 'week' period FROM last_week
+        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'week' period FROM last_week
             UNION
-        SELECT coalesce(MIN(score), 0) as min, 'month' period FROM last_month
+        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'month' period FROM last_month
             UNION
-        SELECT coalesce(MIN(score), 0) as min, 'year' period FROM last_year
+        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'year' period FROM last_year
             UNION
-        SELECT coalesce(MIN(score), 0) as min, 'life' period FROM last_life;
+        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'life' period FROM last_life;
     `, (err, res) => {
         if (err) 
             return callback(err);
 
         var map = {};
         for (const row of res.rows) {
-            map[ row.period ] = row.min;
+            map[ row.period ] = {min: row.min, max: row.max};
         }
         callback(null, map);
     });

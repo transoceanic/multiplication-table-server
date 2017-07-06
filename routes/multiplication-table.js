@@ -9,7 +9,7 @@ function decrypt(text){
 }
 
 
-router.get('/score/min', function(req, res) {
+router.get('/score/best', function(req, res) {
   Achievements.getAll(function(err, result) {
     if (err) {
         // res.status(500).send(err);
