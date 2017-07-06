@@ -82,13 +82,26 @@ exports.check = function(data, callback) {
             }
 
             if (res.rows.length > 0 && (res.rows[0].count < LIMIT || res.rows[0].min < data.score)) {
-                db.query(`INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`,
-                [data.name, data.score],
+// MERGE INTO last_year AS last USING (VALUES(4,'andrey3',400)) temp ON last.id = temp.column1 WHEN NOT MATCHED INSERT VALUES(temp.column2, temp.column3, CURRENT_TIMESTAMP) WHEN MATCHED UPDATE SET score = temp.column3, date = CURRENT_TIMESTAMP;
+                    // INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;
+
+                    // UPDATE last_year SET name = 'andrey3', score = 400, date = CURRENT_TIMESTAMP WHERE id = 4;
+                    // INSERT INTO last_year(name, score, date) (SELECT 'andrey3', 400, CURRENT_TIMESTAMP
+                    //     WHERE NOT EXISTS (SELECT 1 FROM last_year WHERE id = 4)) RETURNING id;
+
+                db.query(`
+                    UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;
+                    INSERT INTO last_${table}(name, score, date) (SELECT $1, $2, CURRENT_TIMESTAMP
+                        WHERE NOT EXISTS (SELECT 1 FROM last_${table} WHERE id = $3)) RETURNING id;
+                    `,
+                [data.name, data.score, data.id || null],
                 (err, res) => {
                     if (err) {
+                        console.log('error----------'+err);
                         counter--;
                         return;
                     }
+                        console.log('success----------'+JSON.stringify(res));
 
                     let last = res.rows[0];
                     last.period = table;
@@ -99,6 +112,7 @@ exports.check = function(data, callback) {
                         callback(null, result);
                     }
                 });
+
             } else {
                 counter--;
             }
