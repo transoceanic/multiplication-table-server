@@ -90,10 +90,14 @@ exports.check = function(data, callback) {
                     //     WHERE NOT EXISTS (SELECT 1 FROM last_year WHERE id = 4)) RETURNING id;
 
                 db.query(`
-                    UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;
-                    INSERT INTO last_${table}(name, score, date) (SELECT $1, $2, CURRENT_TIMESTAMP
-                        WHERE NOT EXISTS (SELECT 1 FROM last_${table} WHERE id = $3)) RETURNING id;
-                    `,
+                    MERGE INTO last_${table} AS last 
+                        USING (VALUES(4,'andrey3',400)) temp 
+                        ON last.id = temp.column1 
+                        WHEN NOT MATCHED 
+                            INSERT VALUES(temp.column2, temp.column3, CURRENT_TIMESTAMP) 
+                        WHEN MATCHED 
+                            UPDATE SET score = temp.column3, date = CURRENT_TIMESTAMP;
+                `,
                 [data.name, data.score, data.id || null],
                 (err, res) => {
                     if (err) {
