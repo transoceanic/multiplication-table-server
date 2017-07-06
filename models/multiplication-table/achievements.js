@@ -97,14 +97,16 @@ exports.check = function(data, callback) {
                     // INSERT INTO last_year(name, score, date) (SELECT 'andrey3', 400, CURRENT_TIMESTAMP
                     //     WHERE NOT EXISTS (SELECT 1 FROM last_year WHERE id = 4)) RETURNING id;
 
-                let query;
+                let query, params;
                 if (res.rows[0].exists) {
                     query = `UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
+                    params = [data.name, data.score, data.id || null];
                 } else {
                     query = `INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
+                    params = [data.name, data.score];
                 }
 
-                db.query(query, [data.name, data.score, data.id || null],
+                db.query(query, params,
                 (err, res) => {
                     if (err) {
                         console.log('error----------'+err);
