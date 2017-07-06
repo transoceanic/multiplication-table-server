@@ -1,6 +1,7 @@
 var DB = require('../../db');
 // var Utils = require('../../utils');
-// var COLLECTION = 'training-exchange';
+var LIMIT = 10;
+var TABLES = ['day', 'week', 'month', 'year', 'life'];
 
 // Clear after week
 // exports.clear = function(callback) {
@@ -17,23 +18,18 @@ var DB = require('../../db');
 
 exports.getAll = function(callback) {
     var db = DB.getDB();
-    const result = [];
 
-    db.query(`
-        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'day' period FROM last_day
-            UNION
-        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'week' period FROM last_week
-            UNION
-        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'month' period FROM last_month
-            UNION
-        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'year' period FROM last_year
-            UNION
-        SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 'life' period FROM last_life;
-    `, (err, res) => {
+    let query = [];
+    for (const table of TABLES) {
+        query.push(`SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 
+                        '${table}' period FROM last_${table}`);
+    }
+
+    db.query(query.join(' UNION '), (err, res) => {
         if (err) 
             return callback(err);
 
-        var map = {};
+        let map = {};
         for (const row of res.rows) {
             map[ row.period ] = {min: row.min, max: row.max};
         }
@@ -41,41 +37,76 @@ exports.getAll = function(callback) {
     });
 };
 
-// Create new user and return its id
-exports.create = function(score, callback) {
+// limit bounds of all tables 100 rows
+exports.limitBounds = function(callback) {
     var db = DB.getDB();
-    const result = [];
-// select id, name, score, row_number() over(order by score desc) from last_week;
+    var counter = 0;
 
-    db.query(`INSERT INTO last_week(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`,
-    [score.name, score.score],
-    (err, res) => {
-        if (err) 
-            return callback(err);
+    for (const table of TABLES) {
+        counter++;
 
-        callback(null, res.rows[0]);
-    });
+        db.query(`DELETE FROM last_${table}
+            WHERE id in (
+                SELECT id
+                FROM (
+                    SELECT id, row_number() over(order by score desc) as rn
+                    FROM last_${table}
+                    ) last
+                WHERE last.rn > ${LIMIT});`, 
+        (err, res) => {
+            // if (err) 
+            //     return callback(err);
+            counter--;
+            if (counter === 0) {
+                callback();
+            }
+        });
+    }
 };
 
-// exports.update = function(id, training, callback) {
-//     var db = DB.getDB();
-//     training._id = Utils.ObjectID(id);
-//     db.collection(COLLECTION).updateOne({'_id': Utils.ObjectID(id)}, training, function(err, result) {
-//         if (err)
-//             return callback(err);
+// Check if score within 100 best scores
+exports.check = function(data, callback) {
+    var db = DB.getDB();
+    var counter = 0;
+    var result = [];
+// select id, name, score, row_number() over(order by score desc) from last_week;
 
-//         var retObj = {_id: null};
-//         if(result.modifiedCount > 0)
-//             retObj._id = id;
+    for (const table of TABLES) {
+        counter++;
 
-//         // callback(null, training);
-//         callback(null, retObj);
-//     });
-// };
+        db.query(`SELECT coalesce(MIN(score), 0) as min FROM last_${table}`, 
+        (err, res) => {
+            if (err) {
+                counter--;
+                return;
+            }
 
-// exports.remove = function(id, callback) {
-//     db = DB.getDB();
-//     db.collection(COLLECTION).deleteOne({_id: Utils.ObjectID(id)}, function(err, result) {
-//         callback(err);
-//     });
-// };
+            if (res.rows.length > 0 && res.rows[0].min < data.score) {
+                db.query(`INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`,
+                [data.name, data.score],
+                (err, res) => {
+                    if (err) {
+                        counter--;
+                        return;
+                    }
+
+                    let last = res.rows[0];
+                    last.period = table;
+                    result.push(last);
+
+                    counter--;
+                    if (counter === 0) {
+                        callback(null, result);
+                    }
+                });
+            } else {
+                counter--;
+            }
+
+            if (counter === 0) {
+                callback(null, result);
+            }
+        });
+    }
+
+};

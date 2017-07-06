@@ -32,26 +32,35 @@ router.get('/score/best', function(req, res) {
 // });
 
 // save achievements
-router.post('/api/save', function (req, res) {
-    var score = req.body;
+router.post('/score/check', function (req, res) {
+    var data = req.body;
     console.log('save------ '+JSON.stringify(score));
-    // if (score.token) {
-    //     console.log('token '+score.token);
-    //     var sentDate = new Date(parseInt(decrypt(score.token))).getTime();
+    // if (data.token) {
+    //     console.log('token '+data.token);
+    //     var sentDate = new Date(parseInt(decrypt(data.token))).getTime();
     //     if (!isNaN(sentDate)) {
     //         console.log('decrypted '+sentDate);
     //         var now = new Date().getTime();
     //         if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
     //             console.log('success '+Math.abs(now - sentDate));
-                Achievements.create(score, function(err, result) {
-                    if (err) {
-                        // res.status(500).send(err);
-                        res.status(500).send({success: false});
-                    } else {
-                        res.send(result);
-                    }
-                });
-                return;
+                if (data.score > 0) {
+                    Achievements.limitBounds(function(err, result) {
+                        if (err) {
+                            // res.status(500).send(err);
+                            res.status(500).send({success: false});
+                        } else {
+                            Achievements.check(data, function(err, result) {
+                                if (err) {
+                                    // res.status(500).send(err);
+                                    res.status(500).send({success: false});
+                                } else {
+                                    res.send(result);
+                                }
+                            });
+                        }
+                    });
+                    return;
+                }
     //         }
     //     }
     // }
