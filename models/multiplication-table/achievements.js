@@ -76,9 +76,9 @@ exports.check = function(data, callback) {
         counter++;
 
         db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count,
-                    exists(SELECT 1 FROM last_year WHERE id = $1)
+                    exists(SELECT 1 FROM last_${table} WHERE id = $1)
                 FROM last_${table}`, 
-        [data.id || null],
+        [data.stat[table] || null],
         (err, res) => {
             if (err) {
                 counter--;

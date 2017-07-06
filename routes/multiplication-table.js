@@ -49,6 +49,7 @@ router.post('/score/check', function (req, res) {
                             // res.status(500).send(err);
                             res.status(500).send({success: false});
                         } else {
+                            data.stat = data.stat || {};
                             Achievements.check(data, function(err, result) {
                                 if (err) {
                                     // res.status(500).send(err);
