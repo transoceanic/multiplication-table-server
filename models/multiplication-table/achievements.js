@@ -74,14 +74,14 @@ exports.check = function(data, callback) {
     for (const table of TABLES) {
         counter++;
 
-        db.query(`SELECT coalesce(MIN(score), 0) as min FROM last_${table}`, 
+        db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count FROM last_${table}`, 
         (err, res) => {
             if (err) {
                 counter--;
                 return;
             }
 
-            if (res.rows.length > 0 && res.rows[0].min < data.score) {
+            if (res.rows.length > 0 && (res.rows[0].count < LIMIT || res.rows[0].min < data.score)) {
                 db.query(`INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`,
                 [data.name, data.score],
                 (err, res) => {

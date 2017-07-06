@@ -65,7 +65,7 @@ router.post('/score/check', function (req, res) {
     //     }
     // }
 
-    // res.sendStatus(500);
+    res.sendStatus(500);
 });
 
 // // update
