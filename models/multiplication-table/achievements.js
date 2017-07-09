@@ -77,7 +77,7 @@ exports.check = function(data, callback) {
         db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count,
                     exists(SELECT 1 FROM last_${table} WHERE id = $1)
                 FROM last_${table}`, 
-        [data.stat[table] || null],
+        [(data.stat[table] || {}).id || null],
         (err, res) => {
             if (err) {
                 counter--;
@@ -97,7 +97,7 @@ exports.check = function(data, callback) {
                 if (res.rows[0].exists) {
                     console.log('check-3---------');
                     query = `UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
-                    params = [data.name, data.score, data.stat[table] || null];
+                    params = [data.name, data.score, (data.stat[table] || {}).id || null];
                 } else {
                     console.log('check-4---------');
                     query = `INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
@@ -119,7 +119,7 @@ exports.check = function(data, callback) {
                     if (res.command === 'UPDATE') {
                         if (res.rowCount > 0) {
                             result.push({
-                                id: data.stat[table],
+                                id: data.stat[table].id,
                                 period: table
                             });
                         }
