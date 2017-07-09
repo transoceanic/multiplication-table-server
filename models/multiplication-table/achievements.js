@@ -86,17 +86,20 @@ exports.check = function(data, callback) {
                 }
                 return;
             }
-            // console.log('check----------'+JSON.stringify(res));
+            console.log('check-1---------'+JSON.stringify(res));
 
             if (res.rows.length > 0 && 
                     ((res.rows[0].count < LIMIT && (!res.rows[0].exists || res.rows[0].min < data.score)) 
                         || res.rows[0].min < data.score)) {
+                console.log('check-2---------');
 
                 let query, params;
                 if (res.rows[0].exists) {
+                    console.log('check-3---------');
                     query = `UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
                     params = [data.name, data.score, data.stat[table] || null];
                 } else {
+                    console.log('check-4---------');
                     query = `INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
                     params = [data.name, data.score];
                 }
@@ -111,7 +114,7 @@ exports.check = function(data, callback) {
                         return;
                     }
 
-                    // console.log('success----------'+JSON.stringify(res));
+                    console.log('check-success----------'+JSON.stringify(res));
 
                     if (res.command === 'UPDATE') {
                         if (res.rowCount > 0) {
@@ -151,6 +154,7 @@ exports.getOrders = function(data, callback) {
     var db = DB.getDB();
     var newData = [];
     var counter = 0;
+    console.log('getOrders-input-data---------'+JSON.stringify(data));
 
     for (const table of data) {
         counter++;
@@ -161,6 +165,7 @@ exports.getOrders = function(data, callback) {
         [table.id],
         (err, res) => {
             if (!err) {
+                console.log('getOrders-success---------'+JSON.stringify(res));
                 var t = table;
                 t.order = res.rows[0].rn;
                 newData.push(t);

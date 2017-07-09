@@ -20,7 +20,9 @@ git pull origin master // get changes from master or other branch name
 heroku create multiplication-table-server
 git push heroku master    // deploy to heroku
 ##################################################
-app url - https://multiplication-table-server.herokuapp.com/multiplication-table/api/achievements
+app api:
+https://multiplication-table-server.herokuapp.com/multiplication-table/score/best
+https://multiplication-table-server.herokuapp.com/multiplication-table/score/check
 
 ########## Postgres
 heroku addons:create heroku-postgresql:hobby-dev
