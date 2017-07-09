@@ -1,20 +1,7 @@
 var DB = require('../../db');
 // var Utils = require('../../utils');
-var LIMIT = 10;
-var TABLES = ['day', 'week', 'month', 'year', 'life'];
-
-// Clear after week
-// exports.clear = function(callback) {
-//     var db = DB.getDB();
-//     var afterWeek = new Date().getTime() - 7*24*60*60*1000;
-// 	db.collection(COLLECTION)
-//         .deleteMany({'createDate':{$lt:afterWeek}}, function(err, result) {
-//             if (err)
-//                 return callback(err);
-
-//             callback(null, {deletedCount: result.deletedCount});
-//         });
-// };
+var LIMIT = 500;
+var TABLES = ['day', 'week', 'month', 'year', 'century'];
 
 exports.getAll = function(callback) {
     var db = DB.getDB();
@@ -52,7 +39,9 @@ exports.limitBounds = function(callback) {
                     SELECT id, row_number() over(order by score desc) as rn
                     FROM last_${table}
                     ) last
-                WHERE last.rn > ${LIMIT});`, 
+                WHERE last.rn > ${LIMIT}
+                OR date < CURRENT_TIMESTAMP - interval '1 ${table}'
+            );`, 
         (err, res) => {
             // if (err) 
             //     return callback(err);
@@ -65,7 +54,7 @@ exports.limitBounds = function(callback) {
 };
 
 // Check if score within 100 best scores
-exports.check = function(data, callback) {
+exports.update = function(data, callback) {
     var db = DB.getDB();
     var counter = 0;
     var result = [];
@@ -86,20 +75,17 @@ exports.check = function(data, callback) {
                 }
                 return;
             }
-            console.log('check-1---------'+JSON.stringify(res));
+            // console.log('check-1---------'+JSON.stringify(res));
 
             if (res.rows.length > 0 && 
                     ((res.rows[0].count < LIMIT && (!res.rows[0].exists || res.rows[0].min < data.score)) 
                         || res.rows[0].min < data.score)) {
-                console.log('check-2---------');
 
                 let query, params;
                 if (res.rows[0].exists) {
-                    console.log('check-3---------');
                     query = `UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
                     params = [data.name, data.score, (data.stat[table] || {}).id || null];
                 } else {
-                    console.log('check-4---------');
                     query = `INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
                     params = [data.name, data.score];
                 }
@@ -114,7 +100,7 @@ exports.check = function(data, callback) {
                         return;
                     }
 
-                    console.log('check-success----------'+JSON.stringify(res));
+                    // console.log('check-success----------'+JSON.stringify(res));
 
                     if (res.command === 'UPDATE') {
                         if (res.rowCount > 0) {
