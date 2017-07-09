@@ -36,25 +36,34 @@ router.post('/score/check', function (req, res) {
     var data = req.body;
     console.log('check input data------ '+JSON.stringify(data));
     if (data.token) {
+        console.log('check-step-1------ ');
         var sentDate = new Date(parseInt(decrypt(data.token))).getTime();
         if (!isNaN(sentDate)) {
+            console.log('check-step-2------ ');
             // console.log('decrypted '+sentDate);
             var now = new Date().getTime();
             if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
+                console.log('check-step-3------ ');
                 // console.log('success '+Math.abs(now - sentDate));
                 if (data.score > 0) {
+                    console.log('check-step-4------ ');
                     Achievements.limitBounds(function(err, result) {
+                        console.log('check-step-5------ ');
                         if (err) {
                             // res.status(500).send(err);
                             res.status(500).send({success: false});
                         } else {
                             data.stat = data.stat || {};
+                            console.log('check-step-6------ ');
                             Achievements.check(data, function(err, result) {
+                                console.log('check-step-7------ ');
                                 if (err) {
                                     // res.status(500).send(err);
                                     res.status(500).send({success: false});
                                 } else {
+                                    console.log('check-step-8------ ');
                                     if (result.length > 0) {
+                                    console.log('check-step-9------ ');
                                         Achievements.limitBounds(function() {});
 
                                         Achievements.getOrders(result, function(err, result) {
