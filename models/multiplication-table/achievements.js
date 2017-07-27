@@ -1,6 +1,6 @@
 var DB = require('../../db');
 // var Utils = require('../../utils');
-var LIMIT = 500;
+var LIMIT = 5; // TODO: 500
 var TABLES = ['day', 'week', 'month', 'year', 'century'];
 
 exports.getAll = function(callback) {
