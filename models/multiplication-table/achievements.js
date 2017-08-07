@@ -31,7 +31,7 @@ exports.getScoreLists = function(period, callback) {
     db.query(`SELECT name, score, date
             FROM last_${period}
                 WHERE date > CURRENT_TIMESTAMP - interval '1 ${period}'
-                ORDER BY score
+                ORDER BY score DESC
                 LIMIT ${LIMIT_TO_SHOW}`, (err, res) => {
         if (err) 
             return callback(err);
