@@ -20,8 +20,9 @@ router.get('/score/best', function(req, res) {
   });
 });
 
-router.get('/score/lists', function(req, res) {
-  Achievements.getScoreLists(function(err, result) {
+router.get('/score/list/:period', function(req, res) {
+    var period = req.params.period;
+  Achievements.getScoreLists(period, function(err, result) {
     if (err) {
         // res.status(500).send(err);
         res.status(500).send({success: false});

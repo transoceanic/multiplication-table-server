@@ -25,19 +25,14 @@ exports.getAll = function(callback) {
     });
 };
 
-exports.getScoreLists = function(callback) {
+exports.getScoreLists = function(period, callback) {
     var db = DB.getDB();
 
-    let query = [];
-    for (const table of TABLES) {
-        query.push(`SELECT name, score, date, 
-                        '${table}' period FROM last_${table}
-                         WHERE date > CURRENT_TIMESTAMP - interval '1 ${table}'
-                         ORDER BY score
-                         LIMIT ${LIMIT_TO_SHOW}`);
-    }
-
-    db.query(query.join(' UNION '), (err, res) => {
+    db.query(`SELECT name, score, date
+            FROM last_${period}
+                WHERE date > CURRENT_TIMESTAMP - interval '1 ${period}'
+                ORDER BY score
+                LIMIT ${LIMIT_TO_SHOW}`, (err, res) => {
         if (err) 
             return callback(err);
 
