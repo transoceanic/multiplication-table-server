@@ -1,6 +1,7 @@
 var DB = require('../../db');
 // var Utils = require('../../utils');
 var LIMIT = 5; // TODO: 500
+var LIMIT_TO_SHOW = 100; // TODO: 500
 var TABLES = ['day', 'week', 'month', 'year', 'century'];
 
 exports.getAll = function(callback) {
@@ -21,6 +22,31 @@ exports.getAll = function(callback) {
             map[ row.period ] = {min: row.min, max: row.max};
         }
         callback(null, map);
+    });
+};
+
+exports.getScoreLists = function(callback) {
+    var db = DB.getDB();
+
+    let query = [];
+    for (const table of TABLES) {
+        query.push(`SELECT name, score, date, 
+                        '${table}' period FROM last_${table}
+                         WHERE date > CURRENT_TIMESTAMP - interval '1 ${table}'
+                         ORDER BY score
+                         LIMIT ${LIMIT_TO_SHOW}`);
+    }
+
+    db.query(query.join(' UNION '), (err, res) => {
+        if (err) 
+            return callback(err);
+
+        // let map = {};
+        // for (const row of res.rows) {
+        //     map[ row.period ] = {min: row.min, max: row.max};
+        // }
+        // callback(null, map);
+        callback(null, res.rows);
     });
 };
 

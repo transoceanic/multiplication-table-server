@@ -20,6 +20,17 @@ router.get('/score/best', function(req, res) {
   });
 });
 
+router.get('/score/lists', function(req, res) {
+  Achievements.getScoreLists(function(err, result) {
+    if (err) {
+        // res.status(500).send(err);
+        res.status(500).send({success: false});
+    } else {
+        res.send(result);
+    }
+  });
+});
+
 // router.get('/api/sync/:id', function(req, res) {
 //     var id = req.params.id;
 //     Training.getById(id, function(err, training) {
