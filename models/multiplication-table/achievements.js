@@ -1,7 +1,7 @@
 var DB = require('../../db');
 // var Utils = require('../../utils');
-var LIMIT = 5; // TODO: 500
-var LIMIT_TO_SHOW = 100; // TODO: 500
+var LIMIT_TO_SAVE = process.env.LIMIT_TO_SAVE || 500;
+var LIMIT_TO_SHOW = process.env.LIMIT_TO_SHOW || 100; // TODO: 500
 var TABLES = ['day', 'week', 'month', 'year', 'century'];
 
 exports.getAll = function(callback) {
@@ -9,7 +9,7 @@ exports.getAll = function(callback) {
 
     let query = [];
     for (const table of TABLES) {
-        query.push(`SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, 
+        query.push(`SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, COUNT(*) count, 
                         '${table}' period FROM last_${table}`);
     }
 
@@ -19,7 +19,7 @@ exports.getAll = function(callback) {
 
         let map = {};
         for (const row of res.rows) {
-            map[ row.period ] = {min: row.min, max: row.max};
+            map[ row.period ] = {min: row.min, max: row.max, count: row.count};
         }
         callback(null, map);
     });
@@ -60,7 +60,7 @@ exports.limitBounds = function(callback) {
                     SELECT id, row_number() over(order by score desc) as rn
                     FROM last_${table}
                     ) last
-                WHERE last.rn > ${LIMIT}
+                WHERE last.rn > ${LIMIT_TO_SAVE}
                 OR date < CURRENT_TIMESTAMP - interval '1 ${table}'
             );`, 
         (err, res) => {
@@ -99,7 +99,7 @@ exports.update = function(data, callback) {
             // console.log('check-1---------'+JSON.stringify(res));
 
             if (res.rows.length > 0 && 
-                    ((res.rows[0].count < LIMIT && (!res.rows[0].exists || res.rows[0].min < data.score)) 
+                    ((res.rows[0].count < LIMIT_TO_SAVE && (!res.rows[0].exists || res.rows[0].min < data.score)) 
                         || res.rows[0].min < data.score)) {
 
                 let query, params;
