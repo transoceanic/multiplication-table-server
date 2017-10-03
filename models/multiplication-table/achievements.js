@@ -19,7 +19,7 @@ exports.getAll = function(callback) {
 
         let map = {};
         for (const row of res.rows) {
-            map[ row.period ] = {min: row.min, max: row.max, count: row.count};
+            map[ row.period ] = {min: row.count < LIMIT_TO_SHOW ? 0 : row.min, max: row.max};
         }
         callback(null, map);
     });
