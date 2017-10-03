@@ -1,7 +1,7 @@
 var DB = require('../../db');
 // var Utils = require('../../utils');
-var LIMIT_TO_SAVE = process.env.LIMIT_TO_SAVE || 500;
-var LIMIT_TO_SHOW = process.env.LIMIT_TO_SHOW || 100; // TODO: 500
+var LIMIT_TO_SAVE = parseInt(process.env.LIMIT_TO_SAVE || 500);
+var LIMIT_TO_SHOW = parseInt(process.env.LIMIT_TO_SHOW || 100);
 var TABLES = ['day', 'week', 'month', 'year', 'century'];
 
 exports.getAll = function(callback) {
