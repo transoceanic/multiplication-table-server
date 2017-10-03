@@ -19,7 +19,7 @@ exports.getAll = function(callback) {
 
         let map = {};
         for (const row of res.rows) {
-            map[ row.period ] = {min: row.count < LIMIT_TO_SHOW ? 0 : row.min, max: row.max, count: row.count, limit: LIMIT_TO_SHOW};
+            map[ row.period ] = {min: row.count < LIMIT_TO_SHOW ? 0 : row.min, max: row.max/*, count: row.count*/};
         }
         callback(null, map);
     });
@@ -98,9 +98,10 @@ exports.update = function(data, callback) {
             }
             // console.log('check-1---------'+JSON.stringify(res));
 
+            let min = res.rows[0].count < LIMIT_TO_SHOW ? 0 : res.rows[0].min;
             if (res.rows.length > 0 && 
-                    ((res.rows[0].count < LIMIT_TO_SAVE && (!res.rows[0].exists || res.rows[0].min < data.score)) 
-                        || res.rows[0].min < data.score)) {
+                    ((res.rows[0].count < LIMIT_TO_SAVE && (!res.rows[0].exists || min < data.score)) 
+                        || min < data.score)) {
 
                 let query, params;
                 if (res.rows[0].exists) {
