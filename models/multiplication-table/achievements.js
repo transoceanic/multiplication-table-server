@@ -28,7 +28,7 @@ exports.getAll = function(callback) {
 exports.getScoreLists = function(period, callback) {
     var db = DB.getDB();
 
-    db.query(`SELECT name, score, date
+    db.query(`SELECT id, name, score, date
             FROM last_${period}
                 WHERE date > CURRENT_TIMESTAMP - interval '1 ${period}'
                 ORDER BY score DESC
