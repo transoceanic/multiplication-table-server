@@ -4,13 +4,13 @@ var LIMIT_TO_SAVE = parseInt(process.env.LIMIT_TO_SAVE || 500);
 var LIMIT_TO_SHOW = parseInt(process.env.LIMIT_TO_SHOW || 100);
 var TABLES = ['day', 'week', 'month', 'year', 'century'];
 
-exports.getAll = function(callback) {
+exports.getAll = function(times, callback) {
     var db = DB.getDB();
 
     let query = [];
     for (const table of TABLES) {
         query.push(`SELECT coalesce(MAX(score), 0) as max, coalesce(MIN(score), 0) as min, COUNT(*) count, 
-                        '${table}' period FROM last_${table}`);
+                        '${table}' period FROM last_${times}_${table}`);
     }
 
     db.query(query.join(' UNION '), (err, res) => {
@@ -25,11 +25,11 @@ exports.getAll = function(callback) {
     });
 };
 
-exports.getScoreLists = function(period, callback) {
+exports.getScoreLists = function(times, period, callback) {
     var db = DB.getDB();
 
     db.query(`SELECT id, name, score, date
-            FROM last_${period}
+            FROM last_${times}_${period}
                 WHERE date > CURRENT_TIMESTAMP - interval '1 ${period}'
                 ORDER BY score DESC
                 LIMIT ${LIMIT_TO_SHOW}`, (err, res) => {

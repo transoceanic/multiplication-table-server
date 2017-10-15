@@ -2,6 +2,7 @@ var express = require('express');
 var router  = express.Router();
 var Achievements = require('../models/multiplication-table/achievements');
 var LEGAL_INTERVAL = 10*60*1000; // 10 minutes
+var VALID_TIMES = ['10', '12', '20'];
 
 function decrypt(text){
   var temp = parseInt(text, 16);
@@ -9,27 +10,33 @@ function decrypt(text){
 }
 
 
-router.get('/score/best', function(req, res) {
-  Achievements.getAll(function(err, result) {
-    if (err) {
-        // res.status(500).send(err);
-        res.status(500).send({success: false});
-    } else {
-        res.send(result);
-    }
-  });
+router.get('/score/best/:times', function(req, res) {
+  var times = req.params.times;
+  if (VALID_TIMES.indexOf(times) > -1) {
+    Achievements.getAll(times, function(err, result) {
+        if (err) {
+            // res.status(500).send(err);
+            res.status(500).send({success: false});
+        } else {
+            res.send(result);
+        }
+    });
+  }
 });
 
-router.get('/score/list/:period', function(req, res) {
+router.get('/score/list/:times/:period', function(req, res) {
+  var times = req.params.times;
+  if (VALID_TIMES.indexOf(times) > -1) {
     var period = req.params.period;
-  Achievements.getScoreLists(period, function(err, result) {
-    if (err) {
-        // res.status(500).send(err);
-        res.status(500).send({success: false});
-    } else {
-        res.send(result);
-    }
-  });
+    Achievements.getScoreLists(times, period, function(err, result) {
+        if (err) {
+            // res.status(500).send(err);
+            res.status(500).send({success: false});
+        } else {
+            res.send(result);
+        }
+    });
+  }
 });
 
 // router.get('/api/sync/:id', function(req, res) {
@@ -44,7 +51,11 @@ router.get('/score/list/:period', function(req, res) {
 // });
 
 // save achievements
-router.post('/score/update', function (req, res) {
+router.post('/score/update/:times', function (req, res) {
+    var times = req.params.times;
+    res.send(times);
+    return;
+
     var data = req.body;
     // console.log('check input data------ '+JSON.stringify(data));
 
