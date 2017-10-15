@@ -10,7 +10,7 @@ function decrypt(text){
 }
 
 
-router.get('/score/best/:times', function(req, res) {
+router.get('/:times/score/best', function(req, res) {
   var times = req.params.times;
   if (VALID_TIMES.indexOf(times) > -1) {
     Achievements.getAll(times, function(err, result) {
