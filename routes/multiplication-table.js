@@ -24,7 +24,7 @@ router.get('/:times/score/best', function(req, res) {
   }
 });
 
-router.get('/score/list/:times/:period', function(req, res) {
+router.get('/:times/score/list/:period', function(req, res) {
   var times = req.params.times;
   if (VALID_TIMES.indexOf(times) > -1) {
     var period = req.params.period;
