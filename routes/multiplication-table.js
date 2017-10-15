@@ -21,6 +21,8 @@ router.get('/:times/score/best', function(req, res) {
             res.send(result);
         }
     });
+  } else {
+    res.status(500).send({success: false});
   }
 });
 
@@ -36,6 +38,8 @@ router.get('/:times/score/list/:period', function(req, res) {
             res.send(result);
         }
     });
+  } else {
+    res.status(500).send({success: false});
   }
 });
 
@@ -51,10 +55,11 @@ router.get('/:times/score/list/:period', function(req, res) {
 // });
 
 // save achievements
-router.post('/score/update/:times', function (req, res) {
+router.post('/:times/score/update', function (req, res) {
     var times = req.params.times;
-    res.send(times);
-    return;
+    if (VALID_TIMES.indexOf(times) === -1) {
+        return res.status(500).send({success: false});
+    }
 
     var data = req.body;
     // console.log('check input data------ '+JSON.stringify(data));
@@ -67,21 +72,21 @@ router.post('/score/update/:times', function (req, res) {
             if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
                 // console.log('success '+Math.abs(now - sentDate));
                 if (data.score > 0) {
-                    Achievements.limitBounds(function(err, result) {
+                    Achievements.limitBounds(times, function(err, result) {
                         if (err) {
                             // res.status(500).send(err);
                             res.status(500).send({success: false});
                         } else {
                             data.stat = data.stat || {};
-                            Achievements.update(data, function(err, result) {
+                            Achievements.update(times, data, function(err, result) {
                                 if (err) {
                                     // res.status(500).send(err);
                                     res.status(500).send({success: false});
                                 } else {
                                     if (result.length > 0) {
-                                        Achievements.limitBounds(function() {});
+                                        Achievements.limitBounds(times, function() {});
 
-                                        Achievements.getOrders(result, function(err, result) {
+                                        Achievements.getOrders(times, result, function(err, result) {
                                             if (err) {
                                                 // res.status(500).send(err);
                                                 res.status(500).send({success: false});

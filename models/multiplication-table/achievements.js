@@ -46,19 +46,19 @@ exports.getScoreLists = function(times, period, callback) {
 };
 
 // limit bounds of all tables 100 rows
-exports.limitBounds = function(callback) {
+exports.limitBounds = function(times, callback) {
     var db = DB.getDB();
     var counter = 0;
 
     for (const table of TABLES) {
         counter++;
 
-        db.query(`DELETE FROM last_${table}
+        db.query(`DELETE FROM last_${times}_${table}
             WHERE id in (
                 SELECT id
                 FROM (
                     SELECT id, row_number() over(order by score desc) as rn
-                    FROM last_${table}
+                    FROM last_${times}_${table}
                     ) last
                 WHERE last.rn > ${LIMIT_TO_SAVE}
                 OR date < CURRENT_TIMESTAMP - interval '1 ${table}'
@@ -75,7 +75,7 @@ exports.limitBounds = function(callback) {
 };
 
 // Check if score within 100 best scores
-exports.update = function(data, callback) {
+exports.update = function(times, data, callback) {
     var db = DB.getDB();
     var counter = 0;
     var result = [];
@@ -85,8 +85,8 @@ exports.update = function(data, callback) {
         counter++;
 
         db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count,
-                    exists(SELECT 1 FROM last_${table} WHERE id = $1)
-                FROM last_${table}`, 
+                    exists(SELECT 1 FROM last_${times}_${table} WHERE id = $1)
+                FROM last_${times}_${table}`, 
         [(data.stat[table] || {}).id || null],
         (err, res) => {
             if (err) {
@@ -105,10 +105,10 @@ exports.update = function(data, callback) {
 
                 let query, params;
                 if (res.rows[0].exists) {
-                    query = `UPDATE last_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
+                    query = `UPDATE last_${times}_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
                     params = [data.name, data.score, (data.stat[table] || {}).id || null];
                 } else {
-                    query = `INSERT INTO last_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
+                    query = `INSERT INTO last_${times}_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
                     params = [data.name, data.score];
                 }
 
@@ -158,22 +158,22 @@ exports.update = function(data, callback) {
 
 
 // get order
-exports.getOrders = function(data, callback) {
+exports.getOrders = function(times, data, callback) {
     var db = DB.getDB();
     var newData = [];
     var counter = 0;
-    console.log('getOrders-input-data---------'+JSON.stringify(data));
+    // console.log('getOrders-input-data---------'+JSON.stringify(data));
 
     for (const table of data) {
         counter++;
 
         db.query(`SELECT rn FROM 
-                        (SELECT id, row_number() over(order by score desc) AS rn FROM last_${table.period}) AS last 
+                        (SELECT id, row_number() over(order by score desc) AS rn FROM last_${times}_${table.period}) AS last 
                     WHERE id = $1;`, 
         [table.id],
         (err, res) => {
             if (!err) {
-                console.log('getOrders-success---------'+JSON.stringify(res));
+                // console.log('getOrders-success---------'+JSON.stringify(res));
                 var t = table;
                 t.order = res.rows[0].rn;
                 newData.push(t);
