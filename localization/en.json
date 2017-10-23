@@ -1,0 +1,48 @@
+{
+	"staticFolder": "en",
+	"direction": "ltr",
+	"textAlign": "text-left",
+	"title": "AU Driving Test & Learners Test",
+	"headerTitle": {
+		"short": "AU Driving Test",
+		"long": "AU Driving Test & Learners Test"
+	},
+	"menu": {
+		"home": "Home",
+		"features": "Features",
+		"contact": "Contact"
+	},
+	"content": {
+		"title": "Try our training that were specifically created",
+		"paragraphs": [
+			"Use our training exercises if your desired result is not only to pass the exam, but to also use the knowledge gained in practice.",
+			"In addition to the training exercises – the application shows the graph of your training progress and grants you access to all of the questions that appear on the Australian RTAs Drivers Knowledge Test (DKT), divided into categories, road signs, simulations of the actual DKT test format and the option to work on your errors.",
+			"And it's all free and without an internet connection.",
+			"We hope that you will appreciate the convenience of our application.",
+			"AU Driving Test & Learners Test coming up for car, rider, rider snv, heavy rigid vehicle and heavy combination rigid vehicle.",
+			"Best way to learning and prepare to driving theory test."
+		]
+	},
+	"features": {
+		"title": "Features",
+		"progress": "Progress in Training",
+		"categories": "All Categories",
+		"practice": "Practice Test"
+	},
+	"contact": {
+		"title": "Contacts",
+		"name": "Name",
+		"namePlaceholder": "Your Name",
+		"email": "Email Address",
+		"emailPlaceholder": "Your Email",
+		"message": "Message",
+		"messagePlaceholder": "Write Massage",
+		"button": "Send Message",
+		"success": "Your message was sent successfully. Thanks.",
+		"error": "Error occurred while sending mail. Try again later."
+	},
+	"hrefs": {
+		"itunes": "https://itunes.apple.com/app/id1135186617",
+		"googleplay": "https://play.google.com/store/apps/details?id=com.abf.office.drivetest.au"
+	}
+}
