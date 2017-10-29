@@ -49,7 +49,6 @@ app.get('/game/:gameType/:language', function(req, res) {
 // Landing
 app.get('/policy/:gameType', function(req, res) {
     let gameType = req.params.gameType;
-    console.log('policy '+gameType);
     if (VALID_TIMES.indexOf(gameType) > -1) {
         res.render('landing/privacypolicy', {
             appName: ['Multiplication Table 10x10',
@@ -65,64 +64,45 @@ app.get('/policy/:gameType', function(req, res) {
     }
 });
 
-app.post('/game/:gameType/:language/contact', function(request, response) {
+app.post('/game/:gameType/:language/contact', function(req, res) {
     let gameType = req.params.gameType;
     let language = req.params.language;
-    console.log('1 contact '+gameType+', '+language);
+
     if (VALID_TIMES.indexOf(gameType) > -1 && VALID_LANGUAGES.indexOf(language) > -1) {
-    console.log('2 contact '+gameType+', '+language);
-//         sendMail(response, {
-//             to: 'multiplication.times.tables@gmail.com',
-//             email: request.body.email || '--',
-//             name: request.body.name || '--',
-//             message: request.body.message
-//         });
-        var helper = require('sendgrid').mail;
-        var from_email = new helper.Email('multiplication.times.tables@gmail.com');
-        var to_email = new helper.Email('multiplication.times.tables@gmail.com');
-        var subject = 'Hello World from the SendGrid Node.js Library!';
-        var content = new helper.Content('text/plain', 'Hello, Email!');
-        var mail = new helper.Mail(from_email, subject, to_email, content);
-
-        var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
-        var request = sg.emptyRequest({
-            method: 'POST',
-            path: '/v3/mail/send',
-            body: mail.toJSON(),
+        sendMail(res, {
+            to: 'multiplication.times.tables@gmail.com',
+            email: req.body.email || '--',
+            name: req.body.name || '--',
+            message: req.body.message,
+            gameType: gameType,
+            language: language
         });
-
-        sg.API(request, function(error, response) {
-            console.log(response.statusCode);
-            console.log(response.body);
-            console.log(response.headers);
-        });
-
     }
 });
 
-// function sendMail(response, data) {
-// 	sparky.transmissions.send({
-//     options: {
-//       sandbox: true
-//     },
-//     content: {
-//       from: 'testing@' + process.env.SPARKPOST_SANDBOX_DOMAIN, // 'testing@sparkpostbox.com'
-//       subject: 'Contact Form From Landing Page: ' + data.email,
-//       html:'<html><body>"'+data.name+'" '+data.email+'<p>' + data.message + '</p></body></html>'
-//     },
-//     recipients: [
-//       {address: data.to}
-//     ]
-//   })
-//   .then(data => {
-//     console.log('Sent to sparkpost for delivery');
-//     response.end('sent');
-//   })
-//   .catch(err => {
-//     console.error('Unable to send via sparkpost: ' + err);
-//     response.end('error');
-//   });
-// }
+function sendMail(res, data) {
+    var helper = require('sendgrid').mail;
+    var from_email = new helper.Email(data.email);
+    var to_email = new helper.Email('multiplication.times.tables@gmail.com');
+    var subject = 'Contact Form From Landing Page: '+data.email+' ('+data.gameType+')('+data.language+')';
+    var content = new helper.Content('text/plain', '"'+data.name+'" '+data.email+'\n\n' + data.message);
+    var mail = new helper.Mail(from_email, subject, to_email, content);
+
+    var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+    var request = sg.emptyRequest({
+        method: 'POST',
+        path: '/v3/mail/send',
+        body: mail.toJSON(),
+    });
+
+    sg.API(request, function(error, response) {
+        if (!error) {
+            res.end('sent');
+        } else {
+            res.end('error');
+        }
+    });
+}
 
 
 

@@ -28,7 +28,9 @@
     background: url('../images/bg.png') no-repeat scroll;
     background-size: cover;
 }
-
+h3 {
+    font-family: Cooper;
+}
 /*	header 1
 /*----------------------------------------------------*/
 .header1 .navbar{

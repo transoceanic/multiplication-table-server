@@ -67,7 +67,7 @@ var App = function() {
      *  Start the server (starts up the sample application).
      */
     self.start = function() {
-        if (process.env.DEV_ENV) {
+        if (app.get('env') === 'development') {
             app.listen(self.port, self.ipaddress, function() {
                 debug('%s: Node server started on %s:%d ...',
                     Date(Date.now() ), self.ipaddress, self.port);
