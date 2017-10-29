@@ -24,6 +24,11 @@ app api:
 https://multiplication-table-server.herokuapp.com/multiplication-table/score/best
 https://multiplication-table-server.herokuapp.com/multiplication-table/score/check
 
+########## SendGrid (send email)
+npm install sendgrid --save
+    API Key: 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
+    API Key ID: YNtRB_xhRLuQRnEGZ5fdSg
+
 ########## Postgres
 heroku addons:create heroku-postgresql:hobby-dev
 npm install pg --save

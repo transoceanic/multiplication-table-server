@@ -67,18 +67,25 @@ var App = function() {
      *  Start the server (starts up the sample application).
      */
     self.start = function() {
-        db.connect(self.dbConnectionURL, function(err) {
-            if (err) {
-                console.log('Unable to connect to Postgres. '+err);
-                process.exit(1);
-            } else {
-                //  Start the app on the specific interface (and port).
-                app.listen(self.port, self.ipaddress, function() {
-                    debug('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
-                });
-            }
-        });
+        if (process.env.DEV_ENV) {
+            app.listen(self.port, self.ipaddress, function() {
+                debug('%s: Node server started on %s:%d ...',
+                    Date(Date.now() ), self.ipaddress, self.port);
+            });
+        } else {
+            db.connect(self.dbConnectionURL, function(err) {
+                if (err) {
+                    console.log('Unable to connect to Postgres. '+err);
+                    process.exit(1);
+                } else {
+                    //  Start the app on the specific interface (and port).
+                    app.listen(self.port, self.ipaddress, function() {
+                        debug('%s: Node server started on %s:%d ...',
+                            Date(Date.now() ), self.ipaddress, self.port);
+                    });
+                }
+            });
+        }
     };
 
 };

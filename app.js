@@ -49,6 +49,7 @@ app.get('/game/:gameType/:language', function(req, res) {
 // Landing
 app.get('/policy/:gameType', function(req, res) {
     let gameType = req.params.gameType;
+    console.log('policy '+gameType);
     if (VALID_TIMES.indexOf(gameType) > -1) {
         res.render('landing/privacypolicy', {
             appName: ['Multiplication Table 10x10',
@@ -64,20 +65,40 @@ app.get('/policy/:gameType', function(req, res) {
     }
 });
 
-// var SparkPost = require('sparkpost');
-// var sparky = new SparkPost();
-// app.post('/contact/:gameType/:language', function(request, response) {
-//     let gameType = req.params.gameType;
-//     let language = req.params.language;
-//     if (['10', '12', '20'].indexOf(gameType) > -1 && ['en', 'il'].indexOf(language) > -1) {
+app.post('/game/:gameType/:language/contact', function(request, response) {
+    let gameType = req.params.gameType;
+    let language = req.params.language;
+    console.log('1 contact '+gameType+', '+language);
+    if (VALID_TIMES.indexOf(gameType) > -1 && VALID_LANGUAGES.indexOf(language) > -1) {
+    console.log('2 contact '+gameType+', '+language);
 //         sendMail(response, {
 //             to: 'multiplication.times.tables@gmail.com',
 //             email: request.body.email || '--',
 //             name: request.body.name || '--',
 //             message: request.body.message
 //         });
-//     }
-// });
+        var helper = require('sendgrid').mail;
+        var from_email = new helper.Email('multiplication.times.tables@gmail.com');
+        var to_email = new helper.Email('multiplication.times.tables@gmail.com');
+        var subject = 'Hello World from the SendGrid Node.js Library!';
+        var content = new helper.Content('text/plain', 'Hello, Email!');
+        var mail = new helper.Mail(from_email, subject, to_email, content);
+
+        var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+        var request = sg.emptyRequest({
+            method: 'POST',
+            path: '/v3/mail/send',
+            body: mail.toJSON(),
+        });
+
+        sg.API(request, function(error, response) {
+            console.log(response.statusCode);
+            console.log(response.body);
+            console.log(response.headers);
+        });
+
+    }
+});
 
 // function sendMail(response, data) {
 // 	sparky.transmissions.send({
