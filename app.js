@@ -1,3 +1,6 @@
+var VALID_TIMES = process.env.VALID_TIMES; // ['10', '12', '20'];
+var VALID_LANGUAGES = process.env.VALID_LANGUAGES; // ['en', 'il'];
+
 var express = require('express');
 var path = require('path');
 // var favicon = require('serve-favicon');
@@ -32,7 +35,7 @@ app.use('/multiplication-table', multiplicationTable);
 app.get('/game/:gameType/:language', function(req, res) {
     let gameType = req.params.gameType;
     let language = req.params.language;
-    if (['10', '12', '20'].indexOf(gameType) > -1 && ['en', 'il'].indexOf(language) > -1) {
+    if (VALID_TIMES.indexOf(gameType) > -1 && VALID_LANGUAGES.indexOf(language) > -1) {
         let render = require('./localization/' + language);
         render.gameType = gameType;
         res.render('landing/index', render);
@@ -46,11 +49,11 @@ app.get('/game/:gameType/:language', function(req, res) {
 // Landing
 app.get('/policy/:gameType', function(req, res) {
     let gameType = req.params.gameType;
-    if (['10', '12', '20'].indexOf(gameType) > -1) {
+    if (VALID_TIMES.indexOf(gameType) > -1) {
         res.render('landing/privacypolicy', {
             appName: ['Multiplication Table 10x10',
                     'Times Tables 12x12',
-                    'Multiplication Table 20x20'][['10', '12', '20'].indexOf(gameType)],
+                    'Multiplication Table 20x20'][VALID_TIMES.indexOf(gameType)],
             owner: 'Andrey Feldman',
             ownerEmail: 'multiplication.times.tables@gmail.com'
         });

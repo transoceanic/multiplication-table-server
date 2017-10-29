@@ -2,7 +2,7 @@ var express = require('express');
 var router  = express.Router();
 var Achievements = require('../models/multiplication-table/achievements');
 var LEGAL_INTERVAL = 10*60*1000; // 10 minutes
-var VALID_TIMES = ['10', '12', '20'];
+var VALID_TIMES = process.env.VALID_TIMES; // ['10', '12', '20'];
 
 function decrypt(text){
   var temp = parseInt(text, 16);
