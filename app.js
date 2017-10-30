@@ -51,8 +51,8 @@ app.get('/policy/:gameType', function(req, res) {
     let gameType = req.params.gameType;
     if (VALID_TIMES.indexOf(gameType) > -1) {
         res.render('landing/privacypolicy', {
-            appName: ['Multiplication Table 10x10',
-                    'Times Tables 12x12',
+            appName: ['Multiplication Table Kids 10x10',
+                    'Times Tables Kids 12x12',
                     'Multiplication Table 20x20'][VALID_TIMES.indexOf(gameType)],
             owner: 'Andrey Feldman',
             ownerEmail: 'multiplication.times.tables@gmail.com'

@@ -2,10 +2,10 @@
 	"staticFolder": "en",
 	"direction": "ltr",
 	"textAlign": "text-left",
-	"title": "AU Driving Test & Learners Test",
+	"title": "Multiplication Table Kids 10x10",
 	"headerTitle": {
-		"short": "AU Driving Test",
-		"long": "AU Driving Test & Learners Test"
+		"short": "10x10",
+		"long": "Multiplication Table Kids 10x10"
 	},
 	"menu": {
 		"home": "Home",
@@ -13,14 +13,14 @@
 		"contact": "Contact"
 	},
 	"content": {
-		"title": "Try our training that were specifically created",
+		"title": "Easy and simple Gameplay (suitable for kids), vibrant and captivating graphics",
 		"paragraphs": [
-			"Use our training exercises if your desired result is not only to pass the exam, but to also use the knowledge gained in practice.",
-			"In addition to the training exercises – the application shows the graph of your training progress and grants you access to all of the questions that appear on the Australian RTAs Drivers Knowledge Test (DKT), divided into categories, road signs, simulations of the actual DKT test format and the option to work on your errors.",
-			"And it's all free and without an internet connection.",
-			"We hope that you will appreciate the convenience of our application.",
-			"AU Driving Test & Learners Test coming up for car, rider, rider snv, heavy rigid vehicle and heavy combination rigid vehicle.",
-			"Best way to learning and prepare to driving theory test."
+			"Learning tables is not going to be a boring process for your kids now that Multiplication Table Kids 10x10 is available on PlayStore. Multiplication Table Kids 10x10 is the best app out there if you want to make your little ones learn the tables up to 10 in a fun and interesting way. Kids, in this modern world, are more interested to use tech gadgets in place of reading books. You can download this app on their cell phone or tablet and make table learning a fun process for them.",
+			"<strong style=\"font-size:2em;\">How it Works?</strong>",
+			"Multiplication Table Kids 10x10 works like a quiz. The first step is to select the table, a question will appear on the screen along with four options. On tapping the correct option, few points will be added to the player’s score tally. On the other hand, tapping the wrong answer will cost the player a life. The players will have to tap an option in limited time period. Failing to do so will also cost them a life. However, the option of “more time” can come to their rescue. Availing this option will give them more time to complete the quiz. The game begins with training levels. Upon the completion of training levels, kids can enjoy various interesting, exciting, and challenging levels. The game boasts of various other fun features and achievements for kids i.e. bonus rewards, high score of the day, top of the week, month, year, and century player.",
+			"<strong style=\"font-size:2em;\">Exceptional Features</strong>",
+			"<ul style=\"font-family:Cooper;\"><li>Vibrant and captivating graphics</li><li>Enthralling background score</li><li>Easy and simple Gameplay (suitable for kids)</li></ul>",
+			"Multiplication Table Kids 10x10 now in your little one’s gadget and help them to learn tables in a fun and exciting way."
 		]
 	},
 	"features": {
@@ -42,7 +42,7 @@
 		"error": "Error occurred while sending mail. Try again later."
 	},
 	"hrefs": {
-		"itunes": "https://itunes.apple.com/app/id1135186617",
-		"googleplay": "https://play.google.com/store/apps/details?id=com.abf.office.drivetest.au"
+		"itunes": "https://itunes.apple.com/app/id1300602174",
+		"googleplay": "https://play.google.com/store/apps/details?id=com.abf.office.multiplicationtable10.en"
 	}
 }

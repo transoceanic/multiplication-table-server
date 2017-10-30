@@ -49,7 +49,7 @@
                         <ul class="nav navbar-nav navbar-right">
                             <li class="active"><a href="#"><%= menu.home %></a></li>
                             
-                            <li><a href="#blog1" style="color: rgb(255, 255, 255); font-weight: 400; text-transform: uppercase;" src="/images/member1.jpg"><%= menu.features %></a></li>
+                            <!--li><a href="#blog1" style="color: rgb(255, 255, 255); font-weight: 400; text-transform: uppercase;" src="/images/member1.jpg"><%= menu.features %></a></li-->
                             
                             <li><a href="#contact2"><%= menu.contact %></a></li>
                             
@@ -66,7 +66,7 @@
 
                                 <h1><%= content.title %></h1>
                                 <% for (var i=0; i < content.paragraphs.length; i++) { %>
-                                <p><%= content.paragraphs[i] %></p>
+                                <p><%- content.paragraphs[i] %></p>
                                 <% } %>
 
                                 <div class="text-left">

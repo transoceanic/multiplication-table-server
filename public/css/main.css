@@ -31,6 +31,9 @@
 h3 {
     font-family: Cooper;
 }
+.blog1 {
+    display: none;
+}
 /*	header 1
 /*----------------------------------------------------*/
 .header1 .navbar{
@@ -6181,7 +6184,7 @@ hr.shadowDown {
 	
 	.pricing-table1-1 .price-block {
 		margin-bottom: 20px;
-	
+    }
 }
     
 /*	pricing 1-2
