@@ -1,5 +1,5 @@
-var VALID_TIMES = process.env.VALID_TIMES; // ['10', '12', '20'];
-var VALID_LANGUAGES = process.env.VALID_LANGUAGES; // ['en', 'il'];
+var VALID_TIMES = JSON.parse(process.env.VALID_TIMES); // ['10', '12', '20'];
+var VALID_LANGUAGES = JSON.parse(process.env.VALID_LANGUAGES); // ['en', 'il'];
 
 var express = require('express');
 var path = require('path');
