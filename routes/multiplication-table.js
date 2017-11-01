@@ -10,6 +10,17 @@ function decrypt(text){
 }
 
 
+router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
+  for (let i=0; i<VALID_TIMES.length; i++) {
+    Achievements.getScoreLists(VALID_TIMES[i], 'day', function(err, result) {
+        if (!err) {
+            res.send(result);
+        }
+    });
+  }
+});
+
+
 router.get('/:times/score/best', function(req, res) {
   var times = req.params.times;
   if (VALID_TIMES.indexOf(times) > -1) {
