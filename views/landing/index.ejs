@@ -232,16 +232,13 @@
                                 <script>
                                 function sendContactFrom() {
                                     $(".submitSendMailBtn").prop("disabled", true);
-                                    try {
                                     $.post('<%= staticFolder %>/contact', {
                                         name: $("input[name=name]").val(),
                                         email: $("input[name=email]").val(),
                                         message: $("#message").val()
                                     },
                                     function(data) {
-                                        alert('inside error '+data);
                                         if (data === 'sent') {
-                                            //alert('Your message was sent successfully. Thanks.');
                                             $(".sendMailOutput").text('<%= contact.success %>');
                                             $(".sendMailRow").remove();
                                         
@@ -249,14 +246,10 @@
                                             $("input[name=email]").val('');
                                             $("#message").val('');
                                         } else {
-                                            //alert('Error occurred while sending mail. Try again later.');
                                             $(".sendMailOutput").text('<%= contact.error %>');
                                             $(".submitSendMailBtn").prop("disabled", false);
                                         }
                                     });
-                                    } catch(e) {
-                                        alert('error '+e);
-                                    }
                                 
                                     return false;
                                 }
