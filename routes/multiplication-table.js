@@ -17,14 +17,17 @@ router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
         Achievements.getScoreLists(VALID_TIMES[i], 'day', function(err, result) {
             if (!err) {
                 if (result.length < LIMIT_TO_SHOW * 0.8) {
-                    let fakeUsers = require('../models/multiplication-table/fake-names');
-                    for (let j=0, name; j<(LIMIT_TO_SHOW - result.length); j++) {
-                        name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1).split(' ');
-                        // name = name.splice(parseInt(Math.random() * name.length), 1) 
-                        //     + [' ', '.', '-', ''][parseInt(Math.random() * 4)]
-                        //     + [(name[0] || ''), (name[0] || '').toUpperCase(), (name[0] || '').toLowerCase()][parseInt(Math.random() * 3)]
+                        let fakeUsers = require('../models/multiplication-table/fake-names');
+                        for (let j=0, name; j<(LIMIT_TO_SHOW - result.length); j++) {
+                        // name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1).split(' ');
+                        name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1)
+                            .toString().split(' ');
+                        name = name.splice(parseInt(Math.random() * name.length), 1) 
+                            + [' ', '.', '-', ''][parseInt(Math.random() * 4)]
+                            + [(name[0] || ''), (name[0] || '').toUpperCase(), (name[0] || '').toLowerCase()][parseInt(Math.random() * 3)]
+                                .substring(0, [1, 100][parseInt(Math.random() * 2)])
 
-                        list.push(j + ' ' + name);
+                        list.push(name);
                     }
                 }
                 // res.send({success: true});
@@ -106,39 +109,40 @@ router.post('/:times/score/update', function (req, res) {
                             res.status(500).send({success: false});
                         } else {
                             data.stat = data.stat || {};
-                            Achievements.update(times, data, function(err, result) {
-                                if (err) {
-                                    // res.status(500).send(err);
-                                    res.status(500).send({success: false});
-                                } else {
-                                    if (result.length > 0) {
-                                        Achievements.limitBounds(times, function() {});
+                            setScore(times, data, res);
+                            // Achievements.update(times, data, function(err, result) {
+                            //     if (err) {
+                            //         // res.status(500).send(err);
+                            //         res.status(500).send({success: false});
+                            //     } else {
+                            //         if (result.length > 0) {
+                            //             Achievements.limitBounds(times, function() {});
 
-                                        Achievements.getOrders(times, result, function(err, result) {
-                                            if (err) {
-                                                // res.status(500).send(err);
-                                                res.status(500).send({success: false});
-                                            } else {
-                                                if (result && result.length > 0) {
-                                                    // res.send(result && result.length > 0 ? result : null);
-                                                    let output = {};
-                                                    for (const table of result) {
-                                                        output[table.period] = {
-                                                            id: table.id,
-                                                            order: table.order
-                                                        };
-                                                    }
-                                                    res.send(output);
-                                                } else {
-                                                    res.send();
-                                                }
-                                            }
-                                        });
-                                    } else {
-                                        res.send();
-                                    }
-                               }
-                            });
+                            //             Achievements.getOrders(times, result, function(err, result) {
+                            //                 if (err) {
+                            //                     // res.status(500).send(err);
+                            //                     res.status(500).send({success: false});
+                            //                 } else {
+                            //                     if (result && result.length > 0) {
+                            //                         // res.send(result && result.length > 0 ? result : null);
+                            //                         let output = {};
+                            //                         for (const table of result) {
+                            //                             output[table.period] = {
+                            //                                 id: table.id,
+                            //                                 order: table.order
+                            //                             };
+                            //                         }
+                            //                         res.send(output);
+                            //                     } else {
+                            //                         res.send();
+                            //                     }
+                            //                 }
+                            //             });
+                            //         } else {
+                            //             res.send();
+                            //         }
+                            //    }
+                            // });
                         }
                     });
                     return;
@@ -149,6 +153,42 @@ router.post('/:times/score/update', function (req, res) {
 
     res.sendStatus(500);
 });
+
+function setScore(times, data, res) {
+    Achievements.update(times, data, function(err, result) {
+        if (err) {
+            // res.status(500).send(err);
+            res.status(500).send({success: false});
+        } else {
+            if (result.length > 0) {
+                Achievements.limitBounds(times, function() {});
+
+                Achievements.getOrders(times, result, function(err, result) {
+                    if (err) {
+                        // res.status(500).send(err);
+                        res.status(500).send({success: false});
+                    } else {
+                        if (result && result.length > 0) {
+                            // res.send(result && result.length > 0 ? result : null);
+                            let output = {};
+                            for (const table of result) {
+                                output[table.period] = {
+                                    id: table.id,
+                                    order: table.order
+                                };
+                            }
+                            res.send(output);
+                        } else {
+                            res.send();
+                        }
+                    }
+                });
+            } else {
+                res.send();
+            }
+       }
+    });
+}
 
 // // update
 // router.put('/api/sync/:id', function (req, res) {
