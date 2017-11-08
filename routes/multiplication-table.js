@@ -12,14 +12,12 @@ function decrypt(text){
 
 
 router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
-    let list = [];
     for (let i=0; i<VALID_TIMES.length; i++) {
         Achievements.getScoreLists(VALID_TIMES[i], 'day', function(err, result) {
             if (!err) {
                 if (result.length < LIMIT_TO_SHOW * 0.8) {
-                        let fakeUsers = require('../models/multiplication-table/fake-names');
-                        for (let j=0, name; j<(LIMIT_TO_SHOW - result.length); j++) {
-                        // name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1).split(' ');
+                    let fakeUsers = require('../models/multiplication-table/fake-names');
+                    for (let j=0, name; j<(LIMIT_TO_SHOW - result.length); j++) {
                         name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1)
                             .toString().split(' ');
                         name = name.splice(parseInt(Math.random() * name.length), 1) 
@@ -27,34 +25,28 @@ router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
                             + [(name[0] || ''), (name[0] || '').toUpperCase(), (name[0] || '').toLowerCase()][parseInt(Math.random() * 3)]
                                 .substring(0, [1, 100][parseInt(Math.random() * 2)])
 
-                        list.push(name);
-                        try {
-                            
-                            setScore(VALID_TIMES[i], {
-                                    name: name,
-                                    score: parseInt(200 + Math.random() * 400),
-                                    stat: []
-                                }, {
-                                    status: function(code) {
-                                        return {
-                                            send: function() {}
-                                        };
-                                    },
+                        setScore(VALID_TIMES[i], {
+                            name: name,
+                            score: parseInt(200 + Math.random() * 400),
+                            stat: []
+                        }, {
+                            status: function(code) {
+                                return {
                                     send: function() {}
-                                })
-                        } catch (error) {
-                            list.push(error);
-                        }
-                 }
+                                };
+                            },
+                            send: function() {}
+                        });
+                    }
                 }
                 // res.send({success: true});
-                res.send(list);
-            } else {
+            // } else {
                 // res.status(500);
             }
         });
     }
-    // res.send(list);
+
+    res.send();
 });
 
 
@@ -125,41 +117,7 @@ router.post('/:times/score/update', function (req, res) {
                             // res.status(500).send(err);
                             res.status(500).send({success: false});
                         } else {
-                            data.stat = data.stat || {};
                             setScore(times, data, res);
-                            // Achievements.update(times, data, function(err, result) {
-                            //     if (err) {
-                            //         // res.status(500).send(err);
-                            //         res.status(500).send({success: false});
-                            //     } else {
-                            //         if (result.length > 0) {
-                            //             Achievements.limitBounds(times, function() {});
-
-                            //             Achievements.getOrders(times, result, function(err, result) {
-                            //                 if (err) {
-                            //                     // res.status(500).send(err);
-                            //                     res.status(500).send({success: false});
-                            //                 } else {
-                            //                     if (result && result.length > 0) {
-                            //                         // res.send(result && result.length > 0 ? result : null);
-                            //                         let output = {};
-                            //                         for (const table of result) {
-                            //                             output[table.period] = {
-                            //                                 id: table.id,
-                            //                                 order: table.order
-                            //                             };
-                            //                         }
-                            //                         res.send(output);
-                            //                     } else {
-                            //                         res.send();
-                            //                     }
-                            //                 }
-                            //             });
-                            //         } else {
-                            //             res.send();
-                            //         }
-                            //    }
-                            // });
                         }
                     });
                     return;
@@ -172,6 +130,7 @@ router.post('/:times/score/update', function (req, res) {
 });
 
 function setScore(times, data, res) {
+    data.stat = data.stat || {};
     Achievements.update(times, data, function(err, result) {
         if (err) {
             // res.status(500).send(err);
