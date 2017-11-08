@@ -32,7 +32,8 @@ router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
                             
                             setScore(VALID_TIMES[i], {
                                     name: name,
-                                    score: parseInt(200 + Math.random() * 400)
+                                    score: parseInt(200 + Math.random() * 400),
+                                    stat: []
                                 }, {
                                     status: function(code) {
                                         return {
