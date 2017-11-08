@@ -19,16 +19,16 @@ router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
             if (!err) {
                 list.push('if '+(result.length < LIMIT_TO_SHOW * 0.8));
                 if (result.length < LIMIT_TO_SHOW * 0.8) {
-                    let fakeUsers = require('../models/multiplication-table/fake-names');
-                    list.push('fakeUsers.length '+fakeUsers.length);
+                    // let fakeUsers = require('../models/multiplication-table/fake-names');
+                    // list.push('fakeUsers.length '+fakeUsers.length);
                     for (let j=0, name; j<(LIMIT_TO_SHOW - result.length); j++) {
                         list.push('j '+j);
-                        name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1).split(' ');
-                        name = name.splice(parseInt(Math.random() * name.length), 1) 
-                            + [' ', '.', '-', ''][parseInt(Math.random() * 4)]
-                            + [(name[0] || ''), (name[0] || '').toUpperCase(), (name[0] || '').toLowerCase()][parseInt(Math.random() * 3)]
+                        // name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1).split(' ');
+                        // name = name.splice(parseInt(Math.random() * name.length), 1) 
+                        //     + [' ', '.', '-', ''][parseInt(Math.random() * 4)]
+                        //     + [(name[0] || ''), (name[0] || '').toUpperCase(), (name[0] || '').toLowerCase()][parseInt(Math.random() * 3)]
 
-                        list.push(name);
+                        // list.push(name);
                     }
                 }
                 // res.send({success: true});
