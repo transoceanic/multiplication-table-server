@@ -15,10 +15,14 @@ router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
     let list = [];
     for (let i=0; i<VALID_TIMES.length; i++) {
         Achievements.getScoreLists(VALID_TIMES[i], 'day', function(err, result) {
+            list.push('getScoreLists');
             if (!err) {
+                list.push('if '+(result.length < LIMIT_TO_SHOW * 0.8));
                 if (result.length < LIMIT_TO_SHOW * 0.8) {
                     let fakeUsers = require('../models/multiplication-table/fake-names');
+                    list.push('fakeUsers.length '+fakeUsers.length);
                     for (let j=0, name; j<(LIMIT_TO_SHOW - result.length); j++) {
+                        list.push('j '+j);
                         name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1).split(' ');
                         name = name.splice(parseInt(Math.random() * name.length), 1) 
                             + [' ', '.', '-', ''][parseInt(Math.random() * 4)]
