@@ -27,19 +27,24 @@ router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
                             + [(name[0] || ''), (name[0] || '').toUpperCase(), (name[0] || '').toLowerCase()][parseInt(Math.random() * 3)]
                                 .substring(0, [1, 100][parseInt(Math.random() * 2)])
 
-                        // list.push(name);
-                        setScore(VALID_TIMES[i], {
-                            name: name,
-                            score: parseInt(200 + Math.random() * 400)
-                        }, {
-                            status: function(code) {
-                                return {
+                        list.push(name);
+                        try {
+                            
+                            setScore(VALID_TIMES[i], {
+                                    name: name,
+                                    score: parseInt(200 + Math.random() * 400)
+                                }, {
+                                    status: function(code) {
+                                        return {
+                                            send: function() {}
+                                        };
+                                    },
                                     send: function() {}
-                                };
-                            },
-                            send: function() {}
-                        })
-                    }
+                                })
+                        } catch (error) {
+                            list.push(error);
+                        }
+                 }
                 }
                 // res.send({success: true});
                 res.send(list);
