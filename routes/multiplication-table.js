@@ -3,6 +3,7 @@ var router  = express.Router();
 var Achievements = require('../models/multiplication-table/achievements');
 var LEGAL_INTERVAL = 10*60*1000; // 10 minutes
 var VALID_TIMES = JSON.parse(process.env.VALID_TIMES); // ['10', '12', '20'];
+var LIMIT_TO_SHOW = parseInt(process.env.LIMIT_TO_SHOW || 100);
 
 function decrypt(text){
   var temp = parseInt(text, 16);
@@ -11,15 +12,28 @@ function decrypt(text){
 
 
 router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
-  for (let i=0; i<VALID_TIMES.length; i++) {
-    Achievements.getScoreLists(VALID_TIMES[i], 'day', function(err, result) {
-        if (!err) {
-            res.send(result);
-        } else {
-            res.status(500);
-        }
-    });
-  }
+    let list = [];
+    for (let i=0; i<VALID_TIMES.length; i++) {
+        Achievements.getScoreLists(VALID_TIMES[i], 'day', function(err, result) {
+            if (!err) {
+                if (result.length < LIMIT_TO_SHOW * 0.8) {
+                    let fakeUsers = require('../models/multiplication-table/fake-names');
+                    for (let j=0, name; j<(LIMIT_TO_SHOW - result.length); j++) {
+                        name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1).split(' ');
+                        name = name.splice(parseInt(Math.random() * name.length), 1) 
+                            + [' ', '.', '-', ''][parseInt(Math.random() * 4)]
+                            + [(name[0] || ''), (name[0] || '').toUpperCase(), (name[0] || '').toLowerCase()][parseInt(Math.random() * 3)]
+
+                        list.push(name);
+                    }
+                }
+                // res.send({success: true});
+            } else {
+                // res.status(500);
+            }
+        });
+    }
+    res.send(list);
 });
 
 
