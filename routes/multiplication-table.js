@@ -32,6 +32,7 @@ router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
                     }
                 }
                 // res.send({success: true});
+                res.send(list);
             } else {
                 // res.status(500);
             }
