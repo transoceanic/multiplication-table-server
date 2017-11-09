@@ -11,13 +11,14 @@ function decrypt(text){
 }
 
 
-router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
-    for (let i=0; i<VALID_TIMES.length; i++) {
-        Achievements.getScoreLists(VALID_TIMES[i], 'day', function(err, result) {
+router.get('/:times/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
+    var times = req.params.times;
+    if (VALID_TIMES.indexOf(times) > -1) {
+        Achievements.getScoreLists(times, 'day', function(err, result) {
             if (!err) {
                 if (result.length < LIMIT_TO_SHOW * 0.8) {
                     let fakeUsers = require('../models/multiplication-table/fake-names');
-                    for (let j=0, name; j<(LIMIT_TO_SHOW - result.length); j++) {
+                    for (let i=0, name; i<Math.min(10, LIMIT_TO_SHOW - result.length); i++) {
                         name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1)
                             .toString().split(' ');
                         name = name.splice(parseInt(Math.random() * name.length), 1) 
@@ -25,10 +26,9 @@ router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
                             + [(name[0] || ''), (name[0] || '').toUpperCase(), (name[0] || '').toLowerCase()][parseInt(Math.random() * 3)]
                                 .substring(0, [1, 100][parseInt(Math.random() * 2)])
 
-                        setScore(VALID_TIMES[i], {
+                        setScore(times, {
                             name: name,
-                            score: parseInt(200 + Math.random() * 400),
-                            stat: []
+                            score: parseInt(200 + Math.random() * 400)
                         }, {
                             status: function(code) {
                                 return {
@@ -39,14 +39,14 @@ router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
                         });
                     }
                 }
-                // res.send({success: true});
-            // } else {
-                // res.status(500);
+                res.send({length: result.length});
+            } else {
+                res.status(500);
             }
         });
     }
 
-    res.send();
+    // res.send();
 });
 
 
