@@ -11,8 +11,10 @@ function decrypt(text){
 }
 
 
-router.get('/:times/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
-    var times = req.params.times;
+// router.get('/:times/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
+router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
+    // var times = req.params.times;
+    var times = '10';
     if (VALID_TIMES.indexOf(times) > -1) {
         Achievements.getScoreLists(times, 'day', function(err, result) {
             if (!err) {
