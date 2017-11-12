@@ -11,16 +11,14 @@ function decrypt(text){
 }
 
 
-// router.get('/:times/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
-router.get('/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
-    // var times = req.params.times;
-    var times = '10';
+router.get('/:times/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res) {
+    var times = req.params.times;
     if (VALID_TIMES.indexOf(times) > -1) {
         Achievements.getScoreLists(times, 'day', function(err, result) {
             if (!err) {
                 if (result.length < LIMIT_TO_SHOW * 0.8) {
                     let fakeUsers = require('../models/multiplication-table/fake-names');
-                    for (let i=0, name; i<Math.min(10, LIMIT_TO_SHOW - result.length); i++) {
+                    for (let i=0, name; i<Math.min(15, LIMIT_TO_SHOW - result.length); i++) {
                         name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1)
                             .toString().split(' ');
                         name = name.splice(parseInt(Math.random() * name.length), 1) 
