@@ -34,33 +34,38 @@ npm install pg --save
 # run postgres cli (command from postgres addons -> View credentials) https://data.heroku.com/datastores/87af4658-7d1f-4f7b-9560-5e470699a180
 heroku pg:psql postgresql-round-61891 --app multiplication-table-server // to open db client connected to heroku db
     CREATE TABLE LAST_10_DAY(
-        ID      BIGSERIAL   PRIMARY KEY,
-        NAME    TEXT        NOT NULL,
-        SCORE   INTEGER     NOT NULL,
-        DATE    TIMESTAMP   NOT NULL
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
     );
     CREATE TABLE LAST_10_WEEK(
-        ID      BIGSERIAL   PRIMARY KEY,
-        NAME    TEXT        NOT NULL,
-        SCORE   INTEGER     NOT NULL,
-        DATE    TIMESTAMP   NOT NULL
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
     );
     CREATE TABLE LAST_10_MONTH(
-        ID      BIGSERIAL   PRIMARY KEY,
-        NAME    TEXT        NOT NULL,
-        SCORE   INTEGER     NOT NULL,
-        DATE    TIMESTAMP   NOT NULL
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
     );
     CREATE TABLE LAST_10_YEAR(
-        ID      BIGSERIAL   PRIMARY KEY,
-        NAME    TEXT        NOT NULL,
-        SCORE   INTEGER     NOT NULL,
-        DATE    TIMESTAMP   NOT NULL
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
     );
     CREATE TABLE LAST_10_CENTURY(
-        ID      BIGSERIAL   PRIMARY KEY,
-        NAME    TEXT        NOT NULL,
-        SCORE   INTEGER     NOT NULL,
-        DATE    TIMESTAMP   NOT NULL
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
     );
 ##################################################

@@ -18,7 +18,7 @@ router.get('/:times/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res
             if (!err) {
                 if (result.length < LIMIT_TO_SHOW * 0.8) {
                     let fakeUsers = require('../models/multiplication-table/fake-names');
-                    for (let i=0, name; i<Math.min(15, LIMIT_TO_SHOW - result.length); i++) {
+                    for (let i=0, name; i<Math.min(1, LIMIT_TO_SHOW - result.length); i++) {
                         name = fakeUsers.splice( parseInt(Math.random() * fakeUsers.length), 1)
                             .toString().split(' ');
                         name = name.splice(parseInt(Math.random() * name.length), 1) 
@@ -28,7 +28,7 @@ router.get('/:times/A3XHE21UIW5esy4A8iYUKPol4V3h2irpJ5596ySK', function(req, res
 
                         setScore(times, {
                             name: name,
-                            score: parseInt(200 + Math.random() * 400)
+                            score: parseInt(50 + Math.random() * 200)
                         }, {
                             status: function(code) {
                                 return {
@@ -162,7 +162,80 @@ function setScore(times, data, res) {
             } else {
                 res.send();
             }
-       }
+        }
+    });
+}
+
+
+// save achievements
+router.post('/:times/score/updateTest', function (req, res) {
+    var times = req.params.times;
+    if (VALID_TIMES.indexOf(times) === -1) {
+        return res.status(500).send({success: false});
+    }
+
+    var data = req.body;
+    // console.log('check input data------ '+JSON.stringify(data));
+
+    if (data.token) {
+        var sentDate = new Date(parseInt(decrypt(data.token))).getTime();
+        if (!isNaN(sentDate)) {
+            // console.log('decrypted '+sentDate);
+            var now = new Date().getTime();
+            if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
+                // console.log('success '+Math.abs(now - sentDate));
+                if (data.score > 0) {
+                    Achievements.limitBounds(times, function(err, result) {
+                        if (err) {
+                            // res.status(500).send(err);
+                            res.status(500).send({success: false});
+                        } else {
+                            setScoreTest(times, data, res);
+                        }
+                    });
+                    return;
+                }
+            }
+        }
+    }
+
+    res.sendStatus(500);
+});
+
+function setScoreTest(times, data, res) {
+    data.stat = data.stat || {};
+    Achievements.updateTest(times, data, function(err, result) {
+        if (err) {
+            // res.status(500).send(err);
+            res.status(500).send({success: false});
+        } else {
+            if (result.length > 0) {
+                Achievements.limitBounds(times, function() {});
+
+                Achievements.getOrdersTest(times, result, function(err, result) {
+                    if (err) {
+                        // res.status(500).send(err);
+                        res.status(500).send({success: false});
+                    } else {
+                        if (result && result.length > 0) {
+                            // res.send(result && result.length > 0 ? result : null);
+                            let output = {};
+                            for (const table of result) {
+                                output[table.period] = {
+                                    id: table.id,
+                                    order: table.order
+                                };
+                            }
+                            res.send(output);
+                        } else {
+                            res.send();
+                        }
+                    }
+                });
+            } else {
+                res.send();
+            }
+        }
     });
 }
 
