@@ -198,7 +198,8 @@ exports.updateTest = function(times, data, callback) {
         counter++;
 
         db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count,
-                    (SELECT score FROM last_${times}_${table} WHERE id = $1) as exists
+                    exists(SELECT 1 FROM last_${times}_${table} WHERE id = $1),
+                    (SELECT score FROM last_${times}_${table} WHERE id = $1) AS best
                 FROM last_${times}_${table}`, 
         [(data.stat[table] || {}).id || null],
         (err, res) => {
@@ -217,9 +218,9 @@ exports.updateTest = function(times, data, callback) {
                         || min < data.score)) {
 
                 let query, params;
-                if (!!res.rows[0].exists) {
+                if (res.rows[0].exists) {
                     query = `UPDATE last_${times}_${table} SET name = $1, score = $2, score_last = $3, date = CURRENT_TIMESTAMP WHERE id = $4;`;
-                    params = [data.name, Math.max(data.score, res.rows[0].exists), data.score, (data.stat[table] || {}).id || null];
+                    params = [data.name, Math.max(data.score, res.rows[0].best), data.score, (data.stat[table] || {}).id || null];
                 } else {
                     query = `INSERT INTO last_${times}_${table}(name, score, score_last, date) VALUES($1, $2, $2, CURRENT_TIMESTAMP) RETURNING id;`;
                     params = [data.name, data.score];
@@ -283,7 +284,7 @@ exports.getOrdersTest = function(times, data, callback) {
         db.query(`SELECT rn FROM 
                         (SELECT id, row_number() over(order by score desc) AS rn FROM 
                             (SELECT id, CASE WHEN id = $1 THEN score_last ELSE score END AS score 
-                                FROM last_${times}_${table.period}) as t
+                                FROM last_${times}_${table.period}) AS t
                         ) AS last 
                     WHERE id = $1;`, 
         [table.id],
