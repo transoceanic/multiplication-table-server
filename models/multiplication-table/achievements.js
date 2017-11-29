@@ -281,7 +281,9 @@ exports.getOrdersTest = function(times, data, callback) {
         counter++;
 
         db.query(`SELECT rn FROM 
-                        (SELECT id, row_number() over(order by score desc) AS rn FROM last_${times}_${table.period}) AS last 
+                        (SELECT id, row_number() over(order by score desc) AS rn FROM 
+                            (SELECT id, case when id = $1 then score_last else score end as score FROM last_${times}_${table.period})
+                        ) AS last 
                     WHERE id = $1;`, 
         [table.id],
         (err, res) => {
