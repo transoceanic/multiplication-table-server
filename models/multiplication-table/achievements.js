@@ -213,9 +213,12 @@ exports.update = function(times, data, callback) {
             // console.log('check-1---------'+JSON.stringify(res));
 
             let min = res.rows[0].count < LIMIT_TO_SHOW ? 0 : res.rows[0].min;
-            if (res.rows.length > 0 && 
-                    ((res.rows[0].count < LIMIT_TO_SAVE && (!res.rows[0].exists || min < data.score)) 
-                        || min < data.score)) {
+            // if (res.rows.length > 0 && 
+            //         ((res.rows[0].count < LIMIT_TO_SAVE && (!res.rows[0].exists || min < data.score)) 
+            //             || min < data.score)) {
+            if (res.rows[0].exists
+                    || res.rows[0].count < LIMIT_TO_SAVE
+                    || min < data.score) {
 
                 let query, params;
                 if (res.rows[0].exists) {
