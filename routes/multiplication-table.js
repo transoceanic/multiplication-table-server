@@ -95,6 +95,79 @@ router.get('/:times/score/list/:period', function(req, res) {
 // });
 
 // save achievements
+// router.post('/:times/score/update', function (req, res) {
+//     var times = req.params.times;
+//     if (VALID_TIMES.indexOf(times) === -1) {
+//         return res.status(500).send({success: false});
+//     }
+
+//     var data = req.body;
+//     // console.log('check input data------ '+JSON.stringify(data));
+
+//     if (data.token) {
+//         var sentDate = new Date(parseInt(decrypt(data.token))).getTime();
+//         if (!isNaN(sentDate)) {
+//             // console.log('decrypted '+sentDate);
+//             var now = new Date().getTime();
+//             if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
+//                 // console.log('success '+Math.abs(now - sentDate));
+//                 if (data.score > 0) {
+//                     Achievements.limitBounds(times, function(err, result) {
+//                         if (err) {
+//                             // res.status(500).send(err);
+//                             res.status(500).send({success: false});
+//                         } else {
+//                             setScore(times, data, res);
+//                         }
+//                     });
+//                     return;
+//                 }
+//             }
+//         }
+//     }
+
+//     res.sendStatus(500);
+// });
+
+// function setScore(times, data, res) {
+//     data.stat = data.stat || {};
+//     Achievements.update(times, data, function(err, result) {
+//         if (err) {
+//             // res.status(500).send(err);
+//             res.status(500).send({success: false});
+//         } else {
+//             if (result.length > 0) {
+//                 Achievements.limitBounds(times, function() {});
+
+//                 Achievements.getOrders(times, result, function(err, result) {
+//                     if (err) {
+//                         // res.status(500).send(err);
+//                         res.status(500).send({success: false});
+//                     } else {
+//                         if (result && result.length > 0) {
+//                             // res.send(result && result.length > 0 ? result : null);
+//                             let output = {};
+//                             for (const table of result) {
+//                                 output[table.period] = {
+//                                     id: table.id,
+//                                     order: table.order
+//                                 };
+//                             }
+//                             res.send(output);
+//                         } else {
+//                             res.send();
+//                         }
+//                     }
+//                 });
+//             } else {
+//                 res.send();
+//             }
+//         }
+//     });
+// }
+
+
+// save achievements
 router.post('/:times/score/update', function (req, res) {
     var times = req.params.times;
     if (VALID_TIMES.indexOf(times) === -1) {
@@ -140,79 +213,6 @@ function setScore(times, data, res) {
                 Achievements.limitBounds(times, function() {});
 
                 Achievements.getOrders(times, result, function(err, result) {
-                    if (err) {
-                        // res.status(500).send(err);
-                        res.status(500).send({success: false});
-                    } else {
-                        if (result && result.length > 0) {
-                            // res.send(result && result.length > 0 ? result : null);
-                            let output = {};
-                            for (const table of result) {
-                                output[table.period] = {
-                                    id: table.id,
-                                    order: table.order
-                                };
-                            }
-                            res.send(output);
-                        } else {
-                            res.send();
-                        }
-                    }
-                });
-            } else {
-                res.send();
-            }
-        }
-    });
-}
-
-
-// save achievements
-router.post('/:times/score/updateTest', function (req, res) {
-    var times = req.params.times;
-    if (VALID_TIMES.indexOf(times) === -1) {
-        return res.status(500).send({success: false});
-    }
-
-    var data = req.body;
-    // console.log('check input data------ '+JSON.stringify(data));
-
-    if (data.token) {
-        var sentDate = new Date(parseInt(decrypt(data.token))).getTime();
-        if (!isNaN(sentDate)) {
-            // console.log('decrypted '+sentDate);
-            var now = new Date().getTime();
-            if (Math.abs(now - sentDate) < LEGAL_INTERVAL) {
-                // console.log('success '+Math.abs(now - sentDate));
-                if (data.score > 0) {
-                    Achievements.limitBounds(times, function(err, result) {
-                        if (err) {
-                            // res.status(500).send(err);
-                            res.status(500).send({success: false});
-                        } else {
-                            setScoreTest(times, data, res);
-                        }
-                    });
-                    return;
-                }
-            }
-        }
-    }
-
-    res.sendStatus(500);
-});
-
-function setScoreTest(times, data, res) {
-    data.stat = data.stat || {};
-    Achievements.updateTest(times, data, function(err, result) {
-        if (err) {
-            // res.status(500).send(err);
-            res.status(500).send({success: false});
-        } else {
-            if (result.length > 0) {
-                Achievements.limitBounds(times, function() {});
-
-                Achievements.getOrdersTest(times, result, function(err, result) {
                     if (err) {
                         // res.status(500).send(err);
                         res.status(500).send({success: false});

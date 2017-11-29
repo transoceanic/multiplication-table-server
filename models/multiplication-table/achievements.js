@@ -75,120 +75,120 @@ exports.limitBounds = function(times, callback) {
 };
 
 // Check if score within 100 best scores
-exports.update = function(times, data, callback) {
-    var db = DB.getDB();
-    var counter = 0;
-    var result = [];
-// select id, name, score, row_number() over(order by score desc) from last_week;
+// exports.update = function(times, data, callback) {
+//     var db = DB.getDB();
+//     var counter = 0;
+//     var result = [];
+// // select id, name, score, row_number() over(order by score desc) from last_week;
 
-    for (const table of TABLES) {
-        counter++;
+//     for (const table of TABLES) {
+//         counter++;
 
-        db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count,
-                    exists(SELECT 1 FROM last_${times}_${table} WHERE id = $1)
-                FROM last_${times}_${table}`, 
-        [(data.stat[table] || {}).id || null],
-        (err, res) => {
-            if (err) {
-                counter--;
-                if (counter === 0) {
-                    callback(null, result);
-                }
-                return;
-            }
-            // console.log('check-1---------'+JSON.stringify(res));
+//         db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count,
+//                     exists(SELECT 1 FROM last_${times}_${table} WHERE id = $1)
+//                 FROM last_${times}_${table}`, 
+//         [(data.stat[table] || {}).id || null],
+//         (err, res) => {
+//             if (err) {
+//                 counter--;
+//                 if (counter === 0) {
+//                     callback(null, result);
+//                 }
+//                 return;
+//             }
+//             // console.log('check-1---------'+JSON.stringify(res));
 
-            let min = res.rows[0].count < LIMIT_TO_SHOW ? 0 : res.rows[0].min;
-            if (res.rows.length > 0 && 
-                    ((res.rows[0].count < LIMIT_TO_SAVE && (!res.rows[0].exists || min < data.score)) 
-                        || min < data.score)) {
+//             let min = res.rows[0].count < LIMIT_TO_SHOW ? 0 : res.rows[0].min;
+//             if (res.rows.length > 0 && 
+//                     ((res.rows[0].count < LIMIT_TO_SAVE && (!res.rows[0].exists || min < data.score)) 
+//                         || min < data.score)) {
 
-                let query, params;
-                if (res.rows[0].exists) {
-                    query = `UPDATE last_${times}_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
-                    params = [data.name, data.score, (data.stat[table] || {}).id || null];
-                } else {
-                    query = `INSERT INTO last_${times}_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
-                    params = [data.name, data.score];
-                }
+//                 let query, params;
+//                 if (res.rows[0].exists) {
+//                     query = `UPDATE last_${times}_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
+//                     params = [data.name, data.score, (data.stat[table] || {}).id || null];
+//                 } else {
+//                     query = `INSERT INTO last_${times}_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
+//                     params = [data.name, data.score];
+//                 }
 
-                db.query(query, params,
-                (err, res) => {
-                    if (err) {
-                        counter--;
-                        if (counter === 0) {
-                            callback(null, result);
-                        }
-                        return;
-                    }
+//                 db.query(query, params,
+//                 (err, res) => {
+//                     if (err) {
+//                         counter--;
+//                         if (counter === 0) {
+//                             callback(null, result);
+//                         }
+//                         return;
+//                     }
 
-                    // console.log('check-success----------'+JSON.stringify(res));
+//                     // console.log('check-success----------'+JSON.stringify(res));
 
-                    if (res.command === 'UPDATE') {
-                        if (res.rowCount > 0) {
-                            result.push({
-                                id: data.stat[table].id,
-                                period: table
-                            });
-                        }
-                    } else {
-                        if (res.rows && res.rows.length > 0) {
-                            let last = res.rows[0];
-                            last.period = table;
-                            result.push(last);
-                        }
-                    }
+//                     if (res.command === 'UPDATE') {
+//                         if (res.rowCount > 0) {
+//                             result.push({
+//                                 id: data.stat[table].id,
+//                                 period: table
+//                             });
+//                         }
+//                     } else {
+//                         if (res.rows && res.rows.length > 0) {
+//                             let last = res.rows[0];
+//                             last.period = table;
+//                             result.push(last);
+//                         }
+//                     }
 
-                    counter--;
-                    if (counter === 0) {
-                        callback(null, result);
-                    }
-                });
+//                     counter--;
+//                     if (counter === 0) {
+//                         callback(null, result);
+//                     }
+//                 });
 
-            } else {
-                counter--;
-            }
+//             } else {
+//                 counter--;
+//             }
 
-            if (counter === 0) {
-                callback(null, result);
-            }
-        });
-    }
-};
+//             if (counter === 0) {
+//                 callback(null, result);
+//             }
+//         });
+//     }
+// };
 
 
-// get order
-exports.getOrders = function(times, data, callback) {
-    var db = DB.getDB();
-    var newData = [];
-    var counter = 0;
-    // console.log('getOrders-input-data---------'+JSON.stringify(data));
+// // get order
+// exports.getOrders = function(times, data, callback) {
+//     var db = DB.getDB();
+//     var newData = [];
+//     var counter = 0;
+//     // console.log('getOrders-input-data---------'+JSON.stringify(data));
 
-    for (const table of data) {
-        counter++;
+//     for (const table of data) {
+//         counter++;
 
-        db.query(`SELECT rn FROM 
-                        (SELECT id, row_number() over(order by score desc) AS rn FROM last_${times}_${table.period}) AS last 
-                    WHERE id = $1;`, 
-        [table.id],
-        (err, res) => {
-            if (!err) {
-                // console.log('getOrders-success---------'+JSON.stringify(res));
-                var t = table;
-                t.order = res.rows[0].rn;
-                newData.push(t);
-            }
-            counter--;
-            if (counter === 0) {
-                callback(null, newData);
-            }
-        });
-    }
-};
+//         db.query(`SELECT rn FROM 
+//                         (SELECT id, row_number() over(order by score desc) AS rn FROM last_${times}_${table.period}) AS last 
+//                     WHERE id = $1;`, 
+//         [table.id],
+//         (err, res) => {
+//             if (!err) {
+//                 // console.log('getOrders-success---------'+JSON.stringify(res));
+//                 var t = table;
+//                 t.order = res.rows[0].rn;
+//                 newData.push(t);
+//             }
+//             counter--;
+//             if (counter === 0) {
+//                 callback(null, newData);
+//             }
+//         });
+//     }
+// };
 
 
 // Check if score within 100 best scores
-exports.updateTest = function(times, data, callback) {
+exports.update = function(times, data, callback) {
     var db = DB.getDB();
     var counter = 0;
     var result = [];
@@ -272,7 +272,7 @@ exports.updateTest = function(times, data, callback) {
 
 
 // get order
-exports.getOrdersTest = function(times, data, callback) {
+exports.getOrders = function(times, data, callback) {
     var db = DB.getDB();
     var newData = [];
     var counter = 0;
