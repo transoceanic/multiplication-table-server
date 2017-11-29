@@ -198,7 +198,7 @@ exports.updateTest = function(times, data, callback) {
         counter++;
 
         db.query(`SELECT coalesce(MIN(score), 0) as min, count(*) as count,
-                    exists(SELECT 1 FROM last_${times}_${table} WHERE id = $1)
+                    (SELECT score FROM last_${times}_${table} WHERE id = $1) as exists
                 FROM last_${times}_${table}`, 
         [(data.stat[table] || {}).id || null],
         (err, res) => {
@@ -217,11 +217,11 @@ exports.updateTest = function(times, data, callback) {
                         || min < data.score)) {
 
                 let query, params;
-                if (res.rows[0].exists) {
-                    query = `UPDATE last_${times}_${table} SET name = $1, score = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
-                    params = [data.name, data.score, (data.stat[table] || {}).id || null];
+                if (!!res.rows[0].exists) {
+                    query = `UPDATE last_${times}_${table} SET name = $1, score = $2, score_last = $3, date = CURRENT_TIMESTAMP WHERE id = $4;`;
+                    params = [data.name, Math.max(data.score, res.rows[0].exists), data.score, (data.stat[table] || {}).id || null];
                 } else {
-                    query = `INSERT INTO last_${times}_${table}(name, score, date) VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id;`;
+                    query = `INSERT INTO last_${times}_${table}(name, score, score_last, date) VALUES($1, $2, $2, CURRENT_TIMESTAMP) RETURNING id;`;
                     params = [data.name, data.score];
                 }
 
