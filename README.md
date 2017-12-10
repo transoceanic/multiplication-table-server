@@ -68,4 +68,41 @@ heroku pg:psql postgresql-round-61891 --app multiplication-table-server // to op
         DATE        TIMESTAMP   NOT NULL,
         SCORE_LAST  INTEGER
     );
+
+    CREATE TABLE LAST_12_DAY(
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
+    );
+    CREATE TABLE LAST_12_WEEK(
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
+    );
+    CREATE TABLE LAST_12_MONTH(
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
+    );
+    CREATE TABLE LAST_12_YEAR(
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
+    );
+    CREATE TABLE LAST_12_CENTURY(
+        ID          BIGSERIAL   PRIMARY KEY,
+        NAME        TEXT        NOT NULL,
+        SCORE       INTEGER     NOT NULL,
+        DATE        TIMESTAMP   NOT NULL,
+        SCORE_LAST  INTEGER
+    );
+
 ##################################################
