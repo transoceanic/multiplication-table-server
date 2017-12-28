@@ -36,7 +36,7 @@ app.get('/game/:gameType/:language', function(req, res) {
     let gameType = req.params.gameType;
     let language = req.params.language;
     if (VALID_TIMES.indexOf(gameType) > -1 && VALID_LANGUAGES.indexOf(language) > -1) {
-        let render = require('./localization/' + language);
+        let render = require('./localization/' + gameType + '/' + language);
         render.gameType = gameType;
         res.render('landing/index', render);
     } else {
