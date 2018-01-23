@@ -107,8 +107,15 @@ exports.update = function(times, data, callback) {
 
                 let query, params;
                 if (res.rows[0].exists) {
-                    query = `UPDATE last_${times}_${table} SET name = $1, score = $2, score_last = $3, date = CURRENT_TIMESTAMP WHERE id = $4;`;
-                    params = [data.name, Math.max(data.score, res.rows[0].best), data.score, (data.stat[table] || {}).id || null];
+                    // query = `UPDATE last_${times}_${table} SET name = $1, score = $2, score_last = $3, date = CURRENT_TIMESTAMP WHERE id = $4;`;
+                    // params = [data.name, Math.max(data.score, res.rows[0].best), data.score, (data.stat[table] || {}).id || null];
+                    if (data.score > res.rows[0].best) {
+                        query = `UPDATE last_${times}_${table} SET name = $1, score = $2, score_last = $2, date = CURRENT_TIMESTAMP WHERE id = $3;`;
+                        params = [data.name, data.score, (data.stat[table] || {}).id || null];
+                    } else {
+                        query = `UPDATE last_${times}_${table} SET name = $1, score = $2, score_last = $3 WHERE id = $4;`;
+                        params = [data.name, res.rows[0].best, data.score, (data.stat[table] || {}).id || null];
+                    }
                 } else {
                     query = `INSERT INTO last_${times}_${table}(name, score, score_last, date) VALUES($1, $2, $2, CURRENT_TIMESTAMP) RETURNING id;`;
                     params = [data.name, data.score];
