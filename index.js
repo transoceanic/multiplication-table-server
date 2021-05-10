@@ -76,7 +76,7 @@ var App = function() {
             db.connect(self.dbConnectionURL, function(err) {
                 if (err) {
                     console.log('Unable to connect to Postgres. '+err);
-                    process.exit(1);
+                    // process.exit(1); // TODO: check why
                 } else {
                     //  Start the app on the specific interface (and port).
                     app.listen(self.port, self.ipaddress, function() {
