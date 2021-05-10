@@ -31,6 +31,7 @@ app.use('/multiplication-table', multiplicationTable);
 
 
 
+
 // Landing
 app.get('/game/:gameType/:language', function(req, res) {
     let gameType = req.params.gameType;
