@@ -9,7 +9,8 @@ exports.connect = function(url, done) {
   // console.log('connect to url '+url);
 
   var pool = new pg.Pool({
-    connectionString: url
+    connectionString: url,
+    ssl: { rejectUnauthorized: false }
   });
   pool.connect(function(err, db) {
     // if (err) return done(err);
